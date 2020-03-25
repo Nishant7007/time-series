@@ -1,0 +1,14 @@
+onion: 
+mumbai(lasalgaon)
+bangalore
+delhi(azadpur)
+
+potato:
+lucknow(bijnaur)
+kolkata(kalyani)
+
+
+
+date,price,0/1
+0->fill
+1->orig
