@@ -10,6 +10,9 @@
 					<li class="nav-item">
 						<a class="nav-link" id="pills-potato-retail-tab" data-toggle="pill" href="#pills-potato-retail" role="tab" aria-controls="pills-potato-retail" aria-selected="true">Retail</a>
 					</li>
+					<li class="nav-item">
+						<a class="nav-link" id="pills-potato-history-tab" data-toggle="pill" href="#pills-potato-history" role="tab" aria-controls="pills-potato-history" aria-selected="true">Historical Events</a>
+					</li>
 					<!-- <li class="nav-item">
 						<a class="nav-link" id="pills-potato-arrival-tab" data-toggle="pill" href="#pills-potato-arrival" role="tab" aria-controls="pills-potato-arrival" aria-selected="true">Arrival</a>
 					</li> -->
@@ -113,6 +116,10 @@
 						<h5>Kolkata</h5>
 						<div id="plot_arrival_potato_kolkata_3"></div>
 						<hr>
+						
+					</div>
+					<div class="tab-pane fade show" id="pills-potato-history" role="tabpanel" aria-labelledby="pills-potato-history-tab">
+						{% include "./potato_history.html" %}
 						
 					</div>
 

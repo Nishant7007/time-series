@@ -10,6 +10,10 @@
 					<li class="nav-item">
 						<a class="nav-link" id="pills-onion-retail-tab" data-toggle="pill" href="#pills-onion-retail" role="tab" aria-controls="pills-onion-retail" aria-selected="true">Retail</a>
 					</li>
+
+					<li class="nav-item">
+						<a class="nav-link" id="pills-onion-history-tab" data-toggle="pill" href="#pills-onion-history" role="tab" aria-controls="pills-onion-history" aria-selected="true">Historical Events</a>
+					</li>
 					<!-- <li class="nav-item">
 						<a class="nav-link" id="pills-onion-arrival-tab" data-toggle="pill" href="#pills-onion-arrival" role="tab" aria-controls="pills-onion-arrival" aria-selected="true">Arrival</a>
 					</li> -->
@@ -136,6 +140,10 @@
 						<h5>Delhi</h5>
 						<div id="plot_arrival_onion_delhi_3"></div>
 						<hr>
+					</div>
+
+					<div class="tab-pane fade show" id="pills-onion-history" role="tabpanel" aria-labelledby="pills-onion-history-tab">
+						{% include "./onion_history.html" %}
 					</div>
 
 				</div>

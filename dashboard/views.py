@@ -4,6 +4,7 @@ import csv
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
 import json
+import pandas as pd
 
 
 # Create your views here.
@@ -46,7 +47,9 @@ def getDashBoardData(request):
 
 
 
+
 def read_csv(chart_type, item, mandi, source):
+	
 	base_path = "data/web_data/" + source + "/" + item + "/" + mandi + "/"
 	file_path = base_path+"smooth.csv"
 	if chart_type == 1:
@@ -65,17 +68,16 @@ def read_csv(chart_type, item, mandi, source):
 		return ((past_date_list_orig, past_price_list_orig), (past_date_list_miss,past_price_list_miss)), (pred_date_list, pred_price_list)
 
 
-
-
-	if chart_type == 2:
+	else:
 		orig, miss = getFileDateAndPrice(file_path, days=365)
 		return orig, miss
 
-	if chart_type == 3:
-		orig, miss = getFileDateAndPrice(file_path)
-		return orig, miss
+	# if chart_type == 3:
+	# 	orig, miss = getFileDateAndPrice(file_path)
+	# 	anomalies = readAnomalies(item, mandi, source)
+	# 	return orig, miss, anomalies
 		
-
+	
 
 	# if chart_type == 3:
 	# 	file_path = base_path+"smooth.csv"
@@ -83,6 +85,46 @@ def read_csv(chart_type, item, mandi, source):
 	# 	# TODO: start from march
 	# 	return date_list, price_list
 	
+
+
+def readAnomalies(item, city, source):
+	print(city, source)
+
+	# high anamolies
+
+	path = "data/web_data/anamolies/" + city + "_" + "high_anomalies_data.csv"
+
+	data =  pd.read_csv(path)
+
+	data = data.iloc[::29, :]
+	dates = data["0"].values.tolist()
+	price = data["mandi"].values.tolist()
+
+	high_anomaly = (dates, price)
+
+
+	# low anamolies
+
+	path = "data/web_data/anamolies/" + city + "_" + "low_anomalies_data.csv"
+
+	data =  pd.read_csv(path)
+
+	data = data.iloc[::29, :]
+	dates = data["0"].values.tolist()
+	price = data["mandi"].values.tolist()
+
+
+	low_anomaly = (dates, price)
+
+	return (high_anomaly, low_anomaly)
+
+
+	
+
+
+
+	path = "data/web_data/anamolies/" + city + "_" + "low_anomalies_data.csv"
+
 
 
 def getFileDateAndPrice(file, pred=False, days=-1):
@@ -145,6 +187,75 @@ def getFileDateAndPrice(file, pred=False, days=-1):
 
 
 		return (date_list_orig,price_list_orig),  (date_list_miss,price_list_miss)
+
+
+
+
+@csrf_exempt
+def getAnomalousPeriod(request):
+	data = json.loads(request.body)["data"]
+	anomaly_type = data["anomaly_type"]
+	item = data["item"]
+
+	return JsonResponse({"data": getAnomalies(item,anomaly_type)})
+
+
+def getAnomalies(item, anomaly_type):
+	path = "data/web_data/anomalies/" + item + "_" +  anomaly_type + "_" + "anomalies.csv"
+
+	data = pd.read_csv(path)
+
+
+	anomalies = data["0"].replace(to_replace = ["NO"],  value ="NORMAL")
+
+	anomalies = anomalies.values.tolist()
+
+
+	path = "data/web_data/anomalies/" + item + "_" +  anomaly_type + "_" + "anomalies_data.csv"
+
+	dates = pd.read_csv(path).iloc[::29, :]["0"].values.tolist()
+
+	list_d_a =  [a + " (" + d + ")" for d,a in zip(dates, anomalies)]
+	print(list_d_a)
+
+
+
+
+	return list_d_a
+
+
+@csrf_exempt
+def getAnomalousData(request):
+	data = json.loads(request.body)["data"]
+	item = data["item"]
+	anomaly_type = data["anomaly_type"]
+	anomaly_id = int(data["anomaly_id"])
+
+	file_path = "data/web_data/anomalies/" + item + "_" + anomaly_type + "_" + "anomalies_data.csv"
+
+	data = pd.read_csv(file_path)
+	print(anomaly_id)
+	data = data[data["events"]==anomaly_id]
+
+
+	date = data["0"].values.tolist()
+	retail = data["retail"].values.tolist()
+	mandi = data["mandi"].values.tolist()
+	arrival = data["arrival"].values.tolist()
+
+	json_data = {
+		"date": date,
+		"retail":retail,
+		"mandi":mandi,
+		"arrival":arrival,
+	}
+
+	return JsonResponse({"data": json_data})
+
+
+
+
+
 
 
 

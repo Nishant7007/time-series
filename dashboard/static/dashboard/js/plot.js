@@ -16,6 +16,8 @@ $( document ).ready(function() {
 
 	setPotatoChart();
 	setOnionChart();
+
+	setHistory();
 	
 
 	
@@ -148,8 +150,8 @@ function plotChart(type=1, id="", item="", mandi="", source="", title="", min_y,
 
 				x.push(orig_x, miss_x)
 				y.push(orig_y, miss_y)
-
 			}
+			anamolies = null
 
 			plotTimeSeries(id, x, y, type, item, title, source, min_y, max_y);
 
@@ -254,7 +256,7 @@ function plotTimeSeries(id, x, y, type, item, title, source, min_y, max_y){
 				name:`missing`,
 				connectgaps: false
 			},
-	];
+		];
 
 	}
 
@@ -325,6 +327,152 @@ function requestPostData(url, data) {
 		});
 	})
 }
+
+
+function setHistory(){
+	//onion
+	anomaly_type = $("#onion_anomaly_type").val()
+	item = "onion"
+	onion_history_select = "#onion_history_select"
+	plot_id = "onion_history_plot"
+	setHistorySelect(item, anomaly_type, onion_history_select, plot_id)
+
+	$("#onion_anomaly_type").change(function(event) {
+		item = "onion"
+		anomaly_type = $("#onion_anomaly_type").val()
+		plot_id = "onion_history_plot"
+		setHistorySelect(item, anomaly_type, onion_history_select, plot_id)
+	});
+
+	$(onion_history_select).change(function(event) {
+		item = "onion"
+		anomaly_type = $("#onion_anomaly_type").val()
+		plot_id = "onion_history_plot"
+		anomaly_id = $(onion_history_select).val()
+		plot_title = item + " " + anomaly_type + " price anomaly";
+		setPlotHistory(item, anomaly_type, anomaly_id, plot_id, plot_title)
+
+	});
+
+
+	// potato
+	anomaly_type = $("#potato_anomaly_type").val()
+	item = "potato"
+	potato_history_select = "#potato_history_select"
+	plot_id = "potato_history_plot"
+	setHistorySelect(item, anomaly_type, potato_history_select, plot_id)
+
+	$("#potato_anomaly_type").change(function(event) {
+		item = "potato"
+		anomaly_type = $("#potato_anomaly_type").val()
+		plot_id = "potato_history_plot"
+		setHistorySelect(item, anomaly_type, potato_history_select, plot_id)
+	});
+
+	$(potato_history_select).change(function(event) {
+		item = "potato"
+		anomaly_type = $("#potato_anomaly_type").val()
+		plot_id = "potato_history_plot"
+		anomaly_id = $(potato_history_select).val()
+		plot_title = item + " " + anomaly_type + " price anomaly";
+		setPlotHistory(item, anomaly_type, anomaly_id, plot_id, plot_title)
+
+	});
+
+}
+
+function setHistorySelect(item, anomaly_type, id, plot_id){
+	data_to_send = {
+		anomaly_type,
+		item,
+	}
+	requestPostData("/dashboard/getAnomalousPeriod", {data: data_to_send})
+	.then(data => {
+		// console.log(data)
+		option_html = ""
+		for (var i = 0; i < data.length; i++) {
+			option_html+=
+			`
+			<option value=${i}> ${data[i]} </option>
+			`
+		}
+		$(id).html(option_html)
+
+		anomaly_id = $(id).val()
+		plot_title = item + " " + anomaly_type + " price anomaly";
+
+		setPlotHistory(item, anomaly_type, anomaly_id, plot_id, plot_title)
+	});
+}
+
+
+function setPlotHistory(item, anomaly_type, anomaly_id, plot_id, plot_title){
+	data_to_send = {
+		item,
+		anomaly_type,
+		anomaly_id,
+	}
+	requestPostData("/dashboard/getAnomalousData", {data: data_to_send})
+	.then(data=>{
+		console.log(data)
+
+		plotHistory(plot_id, data, plot_title)
+	})
+}
+
+function plotHistory(plot_id, data, title){
+	y_title = "Price in ₹ per 100 kg"
+
+	plot_data = [
+		{
+			x:data["date"],
+			y:data["mandi"],
+			type: 'scatter',
+			name: "Mandi Price"
+		},
+		{
+			x:data["date"],
+			y:data["retail"],
+			type: 'scatter',
+			name: "Retail Price"
+		},
+		// {
+		// 	x:data["date"],
+		// 	y:data["arrival"],
+		// 	type: 'scatter',
+		// }
+	];
+
+	var layout = {
+		width: '1000px',
+		height: '500px',
+		title: title, 
+		showlegend: true,
+		automargin: true,
+		xaxis: {
+			title: {
+				text: "Date (29 Days)",
+			},
+			// fixedrange: true,
+		},
+		yaxis: {
+			title: {
+				text: y_title,
+			},
+			// range: [min_y, max_y],
+			// fixedrange: true,
+		},
+	};
+
+
+	var config = {
+		displayModeBar: false
+	};
+
+	plt = Plotly.newPlot(plot_id, plot_data, layout, config);
+}
+
+
 
 function setCSRF(){
 	csrf_token = $("input[name=csrfmiddlewaretoken]").val();
