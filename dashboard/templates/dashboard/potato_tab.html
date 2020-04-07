@@ -10,14 +10,15 @@
 					<li class="nav-item">
 						<a class="nav-link" id="pills-potato-retail-tab" data-toggle="pill" href="#pills-potato-retail" role="tab" aria-controls="pills-potato-retail" aria-selected="true">Retail</a>
 					</li>
-					<li class="nav-item">
+					<!-- <li class="nav-item">
 						<a class="nav-link" id="pills-potato-arrival-tab" data-toggle="pill" href="#pills-potato-arrival" role="tab" aria-controls="pills-potato-arrival" aria-selected="true">Arrival</a>
-					</li>
+					</li> -->
 
 				</ul>
 				<div class="tab-content" id="pills-tabContent">
 
 					<div class="tab-pane fade show active" id="pills-potato-mandi" role="tabpanel" aria-labelledby="pills-potato-mandi-tab">
+						{% include "./forecasting-info.html" %}
 						<h4>Recent 30 days</h4>
 						<hr><hr>
 						<h5>Lucknow</h5>
@@ -51,6 +52,7 @@
 					</div>
 
 					<div class="tab-pane fade show" id="pills-potato-retail" role="tabpanel" aria-labelledby="pills-potato-retail-tab">
+						{% include "./forecasting-info.html" %}
 						<h4>Recent 30 days</h4>
 						<hr><hr>
 						<h5>Lucknow</h5>
@@ -83,6 +85,8 @@
 					</div>
 
 					<div class="tab-pane fade show" id="pills-potato-arrival" role="tabpanel" aria-labelledby="pills-potato-arrival-tab">
+						{% include "./forecasting-info.html" %}
+
 						<h4>Recent 30 days</h4>
 						<hr><hr>
 						<h5>Lucknow</h5>

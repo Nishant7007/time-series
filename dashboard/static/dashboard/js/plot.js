@@ -48,14 +48,14 @@ function setPotatoChart(){
 
 
 	//arrival
-	plotChart(type=1, id="plot_arrival_potato_lucknow_1", item="potato", mandi="lucknow", source="arrival",  title="Recent 30 days potato arrival", 0, 1007);
-	plotChart(type=1, id="plot_arrival_potato_kolkata_1", item="potato", mandi="kolkata", source="arrival",  title="Recent 30 days potato arrival", 0, 1007);
+	// plotChart(type=1, id="plot_arrival_potato_lucknow_1", item="potato", mandi="lucknow", source="arrival",  title="Recent 30 days potato arrival", 0, 1007);
+	// plotChart(type=1, id="plot_arrival_potato_kolkata_1", item="potato", mandi="kolkata", source="arrival",  title="Recent 30 days potato arrival", 0, 1007);
 
-	plotChart(type=2, id="plot_arrival_potato_lucknow_2", item="potato", mandi="lucknow", source="arrival",  title="Last 1 year potato arrival", 0, 1007);
-	plotChart(type=2, id="plot_arrival_potato_kolkata_2", item="potato", mandi="kolkata", source="arrival",  title="Last 1 year potato arrival", 0, 1007);
+	// plotChart(type=2, id="plot_arrival_potato_lucknow_2", item="potato", mandi="lucknow", source="arrival",  title="Last 1 year potato arrival", 0, 1007);
+	// plotChart(type=2, id="plot_arrival_potato_kolkata_2", item="potato", mandi="kolkata", source="arrival",  title="Last 1 year potato arrival", 0, 1007);
 
-	plotChart(type=3, id="plot_arrival_potato_lucknow_3", item="potato", mandi="lucknow", source="arrival",  title="Full potato arrival", 0, 1007);
-	plotChart(type=3, id="plot_arrival_potato_kolkata_3", item="potato", mandi="kolkata", source="arrival",  title="Full potato arrival", 0, 1007);
+	// plotChart(type=3, id="plot_arrival_potato_lucknow_3", item="potato", mandi="lucknow", source="arrival",  title="Full potato arrival", 0, 1007);
+	// plotChart(type=3, id="plot_arrival_potato_kolkata_3", item="potato", mandi="kolkata", source="arrival",  title="Full potato arrival", 0, 1007);
 
 }
 
@@ -88,17 +88,17 @@ function setOnionChart(){
 
 
 	// arrival
-	plotChart(type=1, id="plot_arrival_onion_mumbai_1", item="onion", mandi="mumbai", source="arrival",  title="Recent 30 days onion arrival", 0, 25000);
-	plotChart(type=1, id="plot_arrival_onion_bangalore_1", item="onion", mandi="bangalore", source="arrival",  title="Recent 30 days onion arrival", 0, 25000);
-	plotChart(type=1, id="plot_arrival_onion_delhi_1", item="onion", mandi="delhi", source="arrival",  title="Recent 30 days onion arrival", 0, 25000);
+	// plotChart(type=1, id="plot_arrival_onion_mumbai_1", item="onion", mandi="mumbai", source="arrival",  title="Recent 30 days onion arrival", 0, 25000);
+	// plotChart(type=1, id="plot_arrival_onion_bangalore_1", item="onion", mandi="bangalore", source="arrival",  title="Recent 30 days onion arrival", 0, 25000);
+	// plotChart(type=1, id="plot_arrival_onion_delhi_1", item="onion", mandi="delhi", source="arrival",  title="Recent 30 days onion arrival", 0, 25000);
 
-	plotChart(type=2, id="plot_arrival_onion_mumbai_2", item="onion", mandi="mumbai", source="arrival",  title="Last 1 year onion arrival", 0, 25000);
-	plotChart(type=2, id="plot_arrival_onion_bangalore_2", item="onion", mandi="bangalore", source="arrival",  title="Last 1 year onion arrival", 0, 25000);
-	plotChart(type=2, id="plot_arrival_onion_delhi_2", item="onion", mandi="delhi", source="arrival",  title="Last 1 year onion arrival", 0, 25000);
+	// plotChart(type=2, id="plot_arrival_onion_mumbai_2", item="onion", mandi="mumbai", source="arrival",  title="Last 1 year onion arrival", 0, 25000);
+	// plotChart(type=2, id="plot_arrival_onion_bangalore_2", item="onion", mandi="bangalore", source="arrival",  title="Last 1 year onion arrival", 0, 25000);
+	// plotChart(type=2, id="plot_arrival_onion_delhi_2", item="onion", mandi="delhi", source="arrival",  title="Last 1 year onion arrival", 0, 25000);
 
-	plotChart(type=3, id="plot_arrival_onion_mumbai_3", item="onion", mandi="mumbai", source="arrival",  title="Full onion arrival", 0, 25000);
-	plotChart(type=3, id="plot_arrival_onion_bangalore_3", item="onion", mandi="bangalore", source="arrival",  title="Full onion arrival", 0, 25000);
-	plotChart(type=3, id="plot_arrival_onion_delhi_3", item="onion", mandi="delhi", source="arrival",  title="Full onion arrival", 0, 25000);
+	// plotChart(type=3, id="plot_arrival_onion_mumbai_3", item="onion", mandi="mumbai", source="arrival",  title="Full onion arrival", 0, 25000);
+	// plotChart(type=3, id="plot_arrival_onion_bangalore_3", item="onion", mandi="bangalore", source="arrival",  title="Full onion arrival", 0, 25000);
+	// plotChart(type=3, id="plot_arrival_onion_delhi_3", item="onion", mandi="delhi", source="arrival",  title="Full onion arrival", 0, 25000);
 
 
 
