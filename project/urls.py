@@ -23,5 +23,14 @@ urlpatterns = [
     # path('', views.index, name="index"),
     # path('first_app/', include('first_app.urls')),
     path('dashboard/', include('dashboard.urls')),
+    path('base/', include('base.urls')),
+    path('dispersion/', include('dispersion.urls')),
+    path('volatility/', include('volatility.urls')),
+    path('home/', include('home.urls')),
+    # path('', include('fcaData.urls')),
+    path('', include('indicator.urls')),
     path('admin/', admin.site.urls),
 ]
+
+
+

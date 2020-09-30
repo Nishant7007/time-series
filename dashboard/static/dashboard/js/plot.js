@@ -13,6 +13,7 @@
 $( document ).ready(function() {
 
 	setCSRF();
+	setScrollButton();
 
 	setPotatoChart();
 	setOnionChart();
@@ -22,6 +23,25 @@ $( document ).ready(function() {
 
 	
 });
+
+function setScrollButton(){
+	$(window).scroll(function () {
+		if ($(this).scrollTop() > 50) {
+			$('#back-to-top').fadeIn();
+		} else {
+			$('#back-to-top').fadeOut();
+		}
+	});
+
+	// scroll body to 0px on click
+	$('#back-to-top').click(function () {
+		$('body,html').animate({
+			scrollTop: 0
+		}, 400);
+		return false;
+	});
+
+}
 
 
 // type: 1(-30+30)
@@ -62,6 +82,9 @@ function setPotatoChart(){
 }
 
 function setOnionChart(){
+
+	plotChartMandiRetail(type=1, id="plot_mandi_retail_onion_mumbai_1", item="onion", mandi="mumbai", title="Recent 30 days onion price", min_y=101, max_y=15000)
+
 	// mandi
 	plotChart(type=1, id="plot_mandi_onion_mumbai_1", item="onion", mandi="mumbai", source="mandi",  title="Recent 30 days onion price", min_y=101, max_y=12000);
 	plotChart(type=1, id="plot_mandi_onion_bangalore_1", item="onion", mandi="bangalore", source="mandi",  title="Recent 30 days onion price", min_y=101, max_y=12000);
@@ -104,6 +127,321 @@ function setOnionChart(){
 
 
 
+}
+
+function plotChartMandiRetail(type=1, id="plot_mandi_retail_onion_mumbai_1", item="onion", mandi="mumbai", title="Recent 30 days onion price", min_y=101, max_y=12000){
+	var data_to_send_mandi = {
+		type,
+		item,
+		mandi,
+		"source":"mandi",
+	};
+
+	var data_to_send_retail = {
+		type,
+		item,
+		mandi,
+		"source":"retail",
+	};
+
+	// mandi_data = null;
+	// retail_data = null;
+
+	Promise.all([requestPostData("/dashboard/getDashBoardData", {data: data_to_send_mandi}), 
+				requestPostData("/dashboard/getDashBoardData", {data: data_to_send_retail}), 
+	])
+	.then(([mandi_data, retail_data]) => {
+		mandi_x = [];
+		mandi_y = [];
+
+		retail_x = [];
+		retail_y = [];
+
+		if(type==1){
+			past = mandi_data["past"]
+			pred = mandi_data["pred"]
+
+			past_orig_x = past[0][0]
+			past_orig_y = past[0][1]
+
+			past_miss_x = past[1][0]
+			past_miss_y = past[1][1]
+
+			pred_x = pred[0]
+			pred_y = pred[1]
+
+			mandi_x.push(past_orig_x, past_miss_x, pred_x)
+			mandi_y.push(past_orig_y, past_miss_y, pred_y)
+			///////////////////////
+			past = retail_data["past"]
+			pred = retail_data["pred"]
+
+			past_orig_x = past[0][0]
+			past_orig_y = past[0][1]
+
+			past_miss_x = past[1][0]
+			past_miss_y = past[1][1]
+
+			pred_x = pred[0]
+			pred_y = pred[1]
+
+			retail_x.push(past_orig_x, past_miss_x, pred_x)
+			retail_y.push(past_orig_y, past_miss_y, pred_y)
+		}
+		else{
+			orig = mandi_data["orig"]
+			miss = mandi_data["miss"]
+
+			orig_x = orig[0]
+			orig_y = orig[1]
+
+			miss_x = miss[0]
+			miss_y = miss[1]
+
+			mandi_x.push(orig_x, miss_x)
+			mandi_y.push(orig_y, miss_y)
+			/////////////////
+			orig = retail_data["orig"]
+			miss = retail_data["miss"]
+
+			orig_x = orig[0]
+			orig_y = orig[1]
+
+			miss_x = miss[0]
+			miss_y = miss[1]
+
+			retail_x.push(orig_x, miss_x)
+			retail_y.push(orig_y, miss_y)
+
+		}
+		anamolies = null
+
+		plotTimeSeriesMandiRetail(id, mandi_x, mandi_y, retail_x, retail_y, type, item, title, min_y, max_y);
+
+		
+	})
+	
+}
+
+function plotTimeSeriesMandiRetail(id, mandi_x, mandi_y, retail_x, retail_y, type, item, title, min_y, max_y){
+	y_title= "Price in ₹ per 100 kg";
+	measure = "price";
+
+	data = []
+	mandi_data = []
+	retail_data = []
+
+
+	if(type == 1){
+		mandi_data = [
+			{
+				x:mandi_x[0],
+				y:mandi_y[0],
+				type: 'scatter',
+				mode: "lines+markers",
+				line: {
+    				// 'color': "red",
+    				// 'dash': 'dash',
+    			},
+				name: `${item} ${measure} past original`,
+				connectgaps: false
+			},
+			{
+				x:mandi_x[1],
+				y:mandi_y[1],
+				type: 'scatter',
+				// mode: "lines",
+				// line:{
+				// 	color: "red",
+				// },
+				mode: 'lines+markers',
+    			line: {
+    				'color': "red",
+    				'dash': 'dot'
+    			},
+				name: `${item} ${measure} past missing`,
+				connectgaps: false
+			},
+			{
+				x:mandi_x[2],
+				y:mandi_y[2],
+				type: 'dashed',
+				name: `${item} ${measure} predicted`,
+				connectgaps: false,
+				mode: 'lines',
+				line: {
+					dash: 'dot',
+					width: 4,
+					color: "yellow"
+				}
+
+			},
+
+		]
+
+	}else{
+
+		mandi_data = [
+			{
+				x:mandi_x[0],
+				y:mandi_y[0],
+				// mode: 'markers',
+				type: 'scatter',
+				mode: "lines",
+				line: {
+					width: 4,
+				},
+
+				name: `original`,
+				connectgaps: false
+			},
+			{
+				x:mandi_x[1],
+				y:mandi_y[1],
+				type: 'scatter',
+				mode: "lines",
+				line: {
+					color: "red",
+					width: 2,
+				},
+				// mode: 'lines+markers',
+				// line:{
+				// 	'color': 'red',
+				// 	'dash': 'dot'
+				// },
+    			// marker: {
+    			// 	'color': "red",
+    			// },
+				name:`missing`,
+				connectgaps: false
+			},
+		];
+
+	}
+
+	//////////////////
+	if(type == 1){
+		retail_data = [
+			{
+				x:retail_x[0],
+				y:retail_y[0],
+				type: 'scatter',
+				mode: "lines+markers",
+				line: {
+    				// 'color': "red",
+    				// 'dash': 'dash',
+    			},
+				name: `${item} ${measure} past original`,
+				connectgaps: false
+			},
+			{
+				x:retail_x[1],
+				y:retail_y[1],
+				type: 'scatter',
+				// mode: "lines",
+				// line:{
+				// 	color: "red",
+				// },
+				mode: 'lines+markers',
+    			line: {
+    				'color': "red",
+    				'dash': 'dot'
+    			},
+				name: `${item} ${measure} past missing`,
+				connectgaps: false
+			},
+			{
+				x:retail_x[2],
+				y:retail_y[2],
+				type: 'dashed',
+				name: `${item} ${measure} predicted`,
+				connectgaps: false,
+				mode: 'lines',
+				line: {
+					dash: 'dot',
+					width: 4,
+					color: "yellow"
+				}
+
+			},
+
+		]
+
+	}else{
+
+		retail_data = [
+			{
+				x:retail_x[0],
+				y:retail_y[0],
+				// mode: 'markers',
+				type: 'scatter',
+				mode: "lines",
+				line: {
+					width: 4,
+				},
+
+				name: `original`,
+				connectgaps: false
+			},
+			{
+				x:retail_x[1],
+				y:retail_y[1],
+				type: 'scatter',
+				mode: "lines",
+				line: {
+					color: "red",
+					width: 2,
+				},
+				// mode: 'lines+markers',
+				// line:{
+				// 	'color': 'red',
+				// 	'dash': 'dot'
+				// },
+    			// marker: {
+    			// 	'color': "red",
+    			// },
+				name:`missing`,
+				connectgaps: false
+			},
+		];
+
+	}
+
+
+
+	data = [...mandi_data, ...retail_data]
+
+	// mean_price = d3.mean(y);
+	// console.log(mean_price)
+
+	var layout = {
+		width: '1000px',
+		height: '500px',
+		title: title, 
+		showlegend: true,
+		automargin: true,
+		xaxis: {
+			title: {
+				text: "Date",
+			},
+			fixedrange: true,
+		},
+		yaxis: {
+			title: {
+				text: y_title,
+			},
+			range: [min_y, max_y],
+			fixedrange: true,
+		},
+	};
+
+
+	var config = {
+		displayModeBar: false
+	};
+
+	plt = Plotly.newPlot(id, data, layout, config);
+	console.log(plt)
 }
 
 

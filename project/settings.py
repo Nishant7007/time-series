@@ -38,6 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 'first_app.apps.FirstAppConfig',
     'dashboard',
+    'base',
+    'dispersion',
+    # 'fcaData',
+    'indicator',
+    'volatility',
+    'home',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +86,15 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Cache
+# https://docs.djangoproject.com/en/3.0/topics/cache/s
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+#         'LOCATION': '127.0.0.1:11211',
+#     }
+# }
 
 
 # Password validation
