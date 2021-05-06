@@ -50,7 +50,7 @@ def plot_1Yr():
     commodity_name="Onion"
 
     data_type="Price"
-    data_type="Retail"
+    # data_type="Retail"
     # data_type = "Arrival"
 
 
@@ -72,25 +72,25 @@ def plot_1Yr():
     fig,ax1 = plt.subplots()
     monthyearFmt = mdates.DateFormatter('%B-%Y')
     ax1.xaxis.set_major_formatter(monthyearFmt)
-    plt.ylim((0, 12000))   # set the ylim to bottom, top
+    plt.ylim((0, 8000))   # set the ylim to bottom, top
     
-    # plt.plot(date, mandi_price, label="Mandi Price")
-    # plt.plot(date, mandi_avg, linestyle='--', label="Avg of all Mandi")
-    # plt.fill_between(date, mandi_avg-mandi_std, mandi_avg+mandi_std, alpha=0.25, facecolor='#FF9848')
-    # plt.xlabel("Date")
-    # plt.ylabel('Price in ₹ per 100 kg')
-    # plt.title(f"Mandi Price for {commodity_name} {mandi_name}")
-    # plt.legend()
-    # plt.show()
-
-    plt.plot(date, mandi_price, label="Retail Price")
-    plt.plot(date, mandi_avg, linestyle='--', label="Avg of all Retail Center")
+    plt.plot(date, mandi_price, label="Mandi Price")
+    plt.plot(date, mandi_avg, linestyle='--', label="Avg of all Mandi")
     plt.fill_between(date, mandi_avg-mandi_std, mandi_avg+mandi_std, alpha=0.25, facecolor='#FF9848')
     plt.xlabel("Date")
     plt.ylabel('Price in ₹ per 100 kg')
-    plt.title(f"Retail Price for {commodity_name} {mandi_name}")
+    plt.title(f"Mandi Price for {commodity_name} {mandi_name}")
     plt.legend()
     plt.show()
+
+    # plt.plot(date, mandi_price, label="Retail Price")
+    # plt.plot(date, mandi_avg, linestyle='--', label="Avg of all Retail Center")
+    # plt.fill_between(date, mandi_avg-mandi_std, mandi_avg+mandi_std, alpha=0.25, facecolor='#FF9848')
+    # plt.xlabel("Date")
+    # plt.ylabel('Price in ₹ per 100 kg')
+    # plt.title(f"Retail Price for {commodity_name} {mandi_name}")
+    # plt.legend()
+    # plt.show()
 
 
 

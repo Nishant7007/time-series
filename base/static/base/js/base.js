@@ -1,8 +1,7 @@
 $( document ).ready(function() {
 	setCSRF();	
+	$('.modal').modal();
 });
-
-
 
 
 function setCSRF(){
@@ -15,6 +14,7 @@ function setCSRF(){
 }
 
 function requestPostData(url, data) {
+	console.log("%crequest:", "color: yellow", [url, data])
 	data = {
 		...data,
 		_token:csrf_token
@@ -33,13 +33,12 @@ function requestPostData(url, data) {
 
 			success: function(data, textStatus, jQxhr){
 				var data = data["data"]
+				console.log("%cresponse:",  "color: #39ff14", [url, data])
 				resolve(data)
 				
 			},
 			error: function(jqXhr, textStatus, errorThrown){
-				console.log(jqXhr)
-				console.log(textStatus)
-				console.log(errorThrown)
+				console.log("%cerror", "color: red", {jqXhr, textStatus, errorThrown})
 				reject(errorThrown)
 			},
 		});
@@ -66,6 +65,21 @@ function promisify(f) {
     });
   };
 };
+
+
+
+
+
+function capitalizeFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+chart_dict = {}
+function redraw(chart_id){
+	if(chart_id in chart_dict){
+		chart_dict[chart_id].destroy();
+	}
+}
 
 
 
