@@ -35,12 +35,12 @@ function setNewsFeedSelector(){
     $('.datepicker').datepicker({
     	"format": "yyyy-mm-dd" ,
     	"maxDate": today,
-    	"defaultDate": new Date(2020,11,31),
+    	"defaultDate": new Date(2020,1,3),
     	"selectMonths": true,
     	"autoClose": true,
 
     });
-    $('#id_news_feed_date').val("2020-12-31");
+    $('#id_news_feed_date').val("2020-2-3");
 
 
     //set commodity

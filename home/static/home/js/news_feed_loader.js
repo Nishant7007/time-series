@@ -96,6 +96,7 @@ function setVolatilityNewsFeedByDate(vol_news_data){
 
 function requestVolatilityModal(commodity, date){
 	// set content volatility modal;
+	// date = $("#id_news_feed_date").val();
 	data = {
 		commodity,
 		date,

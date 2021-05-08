@@ -228,7 +228,7 @@ def read_original_data(aggregate=False, commodity_name="Onion", data_type="Price
 
 
 # data_type = Price/ Retail/ Arrival
-def read_forecast_data(aggregate=False, commodity_name="Onion", data_type="Price", mandi_name="Lasalgaon", state_name="Maharashtra", from_date="2019-10-1", to_date="2020-9-30", rolling_window=15):
+def read_forecast_data(aggregate=False, commodity_name="Onion", data_type="Price", mandi_name="Lasalgaon", state_name="Maharashtra", from_date="2019-10-1", to_date="2020-9-30", rolling_window=7):
     # from_date = datetime.strptime(from_date, "%Y-%m-%d").date()    
     # to_date = datetime.strptime(to_date, "%Y-%m-%d").date()
     from_date = pd.to_datetime(from_date, format="%Y-%m-%d") 
@@ -268,29 +268,40 @@ def get_forecast(request):
     to_date_orig = "2020-8-31"
     to_date_forecast = "2020-9-30"
 
+    rolling_window=4
+
     if 'date' in data:
         to_date_forecast = data['date'] # forecast upto today
         from_date = date_str_add(data['date'], months=-4) # 4 moths from today
         to_date_orig = date_str_add(data['date'], months=-1)
+        to_date_orig = to_date_forecast;
 
-    print(from_date, to_date_forecast, to_date_orig)
-
-    _, mandi_price_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig)
-    _, mandi_price_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast)
-
-    _, retail_price_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig)
-    _, retail_price_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast)
-
-    _, arrival_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig)
-    date, arrival_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast)
-
-    _, mandi_avg, mandi_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig)
-    _, retail_avg, retail_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig)
-    _, arrival_avg, arrival_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig)
+    if 'start_date' in data:
+        to_date_forecast = date_str_add(data['end_date'], days=15);
+        from_date = date_str_add(data['start_date'], days=-15);
+        to_date_orig = to_date_forecast;
 
 
-    mandi_anomalous_date = getAnomolyShowDate(commodity_name, mandi_name, state_name, from_date, to_date_forecast, "Price")
-    retail_anomalous_date = getAnomolyShowDate(commodity_name, mandi_name, state_name, from_date, to_date_forecast, "Retail")
+
+
+    # print(from_date, to_date_forecast, to_date_orig)
+
+    _, mandi_price_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+    _, mandi_price_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast, rolling_window=rolling_window)
+
+    _, retail_price_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+    _, retail_price_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast, rolling_window=rolling_window)
+
+    _, arrival_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+    date, arrival_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast, rolling_window=rolling_window)
+
+    _, mandi_avg, mandi_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+    _, retail_avg, retail_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+    _, arrival_avg, arrival_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+
+
+    mandi_anomalous_date, mandi_anomalous_data = getAnomolyShowDate(commodity_name, mandi_name, state_name, from_date, to_date_forecast, "Price")
+    retail_anomalous_date, retail_anomalous_data = getAnomolyShowDate(commodity_name, mandi_name, state_name, from_date, to_date_forecast, "Retail")
 
     response = {
 
@@ -315,6 +326,10 @@ def get_forecast(request):
 
         "mandi_anomalous_date": mandi_anomalous_date,
         "retail_anomalous_date": retail_anomalous_date,
+
+        "mandi_anomalous_data": mandi_anomalous_data,
+        "retail_anomalous_data": retail_anomalous_data,
+
     }
     return JsonResponse({"data": response})
 
@@ -726,8 +741,8 @@ def getAnomolyShowDate(commodity, mandi_name, state_name, from_date, to_date, da
     df = pd.read_csv(file_path)
 
     # change this
-    df = df[df["STATENAME"] == mandi_name]
-    df = df[df["MANDINAME"] == state_name]
+    df = df[df["STATENAME"] == state_name]
+    df = df[df["MANDINAME"] == mandi_name]
 
     df['STARTDATE'] = pd.to_datetime(df['STARTDATE'], format='%Y-%m-%d')
     df['ENDDATE'] = pd.to_datetime(df['ENDDATE'], format='%Y-%m-%d')
@@ -738,7 +753,15 @@ def getAnomolyShowDate(commodity, mandi_name, state_name, from_date, to_date, da
     
     anomaly_date = df["STARTDATE"].to_list()
 
-    return anomaly_date
+    # STARTDATE,ENDDATE,lastMonth,lastYear,SameMonth,MAXMINRATIO,STATENAME,MANDINAME
+    # anomaly_data = df.to_dict('records')
+
+    df = df.set_index('STARTDATE', drop=False)
+    anomaly_data = df.to_dict(orient='index')
+
+    # anomaly_data = {s_date: {} for s_date in anomaly_date}
+
+    return anomaly_date, [anomaly_data]
 
 
 

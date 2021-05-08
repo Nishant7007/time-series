@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
 	$(".dropdown-trigger").dropdown();
-    $('select').formSelect();
-    $('.modal').modal();
+	$('select').formSelect();
+	$('.modal').modal();
 
 
     // plotChartParent();
@@ -109,11 +109,11 @@ function plotChart1(chart_id, date, value, avg, std, data_label, max_yaxis=0.5, 
 
 
 	mean_plus_std = avg.map(function (num, idx) {
-  		return num + std[idx];
+		return num + std[idx];
 	});
 
 	mean_minus_std = avg.map(function (num, idx) {
-  		return num - std[idx];
+		return num - std[idx];
 	});
 
 
@@ -167,22 +167,22 @@ function plotChart1(chart_id, date, value, avg, std, data_label, max_yaxis=0.5, 
 			datasets: datasets,
 		},
 		options: {
-	        scales: {
-	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                	parser: 'YYYY-MM-DD',
-	                    unit: 'day',
-	                    day: 'MMM YY',
-	                    displayFormats:{
-	                    	day: 'MMM YY'
-	                    }
-	                },
-	                ticks: {
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD',
+						unit: 'day',
+						day: 'MMM YY',
+						displayFormats:{
+							day: 'MMM YY'
+						}
+					},
+					ticks: {
 	                	// max: 5,
 	                	// step: 60,
 	                	autoSkip: true,
-        				maxTicksLimit: 12
+	                	maxTicksLimit: 12
 	                }
 	            }],
 	            yAxes: [{
@@ -194,18 +194,18 @@ function plotChart1(chart_id, date, value, avg, std, data_label, max_yaxis=0.5, 
 	            }]
 	        },
 	        tooltips: {
-            	mode: 'point'
-        	},
-        	legend: {
-           labels: {
-               filter: function(legendItem, chartData) {
-                if (legendItem.datasetIndex >= 2) {
-                  return false;
-                }
-               return true;
-               }
-            }
-        }
+	        	mode: 'point'
+	        },
+	        legend: {
+	        	labels: {
+	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex >= 2) {
+	        				return false;
+	        			}
+	        			return true;
+	        		}
+	        	}
+	        }
 
 	    }
 	});
@@ -220,45 +220,45 @@ function plotChart1(chart_id, date, value, avg, std, data_label, max_yaxis=0.5, 
 function drawchart() {
 	var ctx = document.getElementById('chart11').getContext('2d');
 	var myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-        datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)',
-                'rgba(75, 192, 192, 0.2)',
-                'rgba(153, 102, 255, 0.2)',
-                'rgba(255, 159, 64, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)',
-                'rgba(75, 192, 192, 1)',
-                'rgba(153, 102, 255, 1)',
-                'rgba(255, 159, 64, 1)'
-            ],
-            borderWidth: 1
-        }]
-    },
-    options: {
-        scales: {
-            yAxes: [{
-                ticks: {
-                    beginAtZero: true,
-                    min: 0,
-                    max: 1200,
-                    maxTicksLimit: 6,
-                }
-            }],
+		type: 'bar',
+		data: {
+			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+			datasets: [{
+				label: '# of Votes',
+				data: [12, 19, 3, 5, 2, 3],
+				backgroundColor: [
+				'rgba(255, 99, 132, 0.2)',
+				'rgba(54, 162, 235, 0.2)',
+				'rgba(255, 206, 86, 0.2)',
+				'rgba(75, 192, 192, 0.2)',
+				'rgba(153, 102, 255, 0.2)',
+				'rgba(255, 159, 64, 0.2)'
+				],
+				borderColor: [
+				'rgba(255, 99, 132, 1)',
+				'rgba(54, 162, 235, 1)',
+				'rgba(255, 206, 86, 1)',
+				'rgba(75, 192, 192, 1)',
+				'rgba(153, 102, 255, 1)',
+				'rgba(255, 159, 64, 1)'
+				],
+				borderWidth: 1
+			}]
+		},
+		options: {
+			scales: {
+				yAxes: [{
+					ticks: {
+						beginAtZero: true,
+						min: 0,
+						max: 1200,
+						maxTicksLimit: 6,
+					}
+				}],
 
-        }
-    }
-});
+			}
+		}
+	});
 
 }
 
@@ -278,40 +278,58 @@ function plotChartForecast(data, chart_id, color){
 		mandi_price_forecast = data["mandi_price_forecast"]
 		mandi_avg = data["mandi_avg"]
 		mandi_std =  data["mandi_std"]
+		mandi_anomalous_date = data["mandi_anomalous_date"]
+		mandi_anomalous_data = data["mandi_anomalous_data"]
+		
 
-		plotChartForecast1(chart_id[0], date, mandi_price_original, mandi_price_forecast,   mandi_avg,mandi_std, "Mandi Price", max_y_forecast[SELECTED_COMMODITY], color);
+		plotChartForecast1(chart_id[0], date, mandi_price_original, mandi_price_forecast,   mandi_avg,mandi_std, mandi_anomalous_date, mandi_anomalous_data, "Mandi Price", max_y_forecast[SELECTED_COMMODITY], color);
 
 		retail_price_original = data["retail_price_original"]
 		retail_price_forecast = data["retail_price_forecast"]
 		retail_avg = data["retail_avg"]
 		retail_std =  data["retail_std"]
+		retail_anomalous_date = data["retail_anomalous_date"]
+		retail_anomalous_data = data["retail_anomalous_data"]
 
-		plotChartForecast1(chart_id[1], date, retail_price_original, retail_price_forecast, retail_avg,retail_std, "Retail Price", max_y_forecast[SELECTED_COMMODITY], color);
+		plotChartForecast1(chart_id[1], date, retail_price_original, retail_price_forecast, retail_avg,retail_std, retail_anomalous_date, retail_anomalous_data, "Retail Price", max_y_forecast[SELECTED_COMMODITY], color);
 
 		arrival_original = data["arrival_original"]
 		arrival_forecast = data["arrival_forecast"]
 		arrival_avg = data["arrival_avg"]
 		arrival_std =  data["arrival_std"]
 
-		plotChartForecast1(chart_id[2], date, arrival_original, arrival_forecast,  arrival_avg,arrival_std, "Arrival", max_y_forecast[SELECTED_COMMODITY], color);
+		plotChartForecast1(chart_id[2], date, arrival_original, arrival_forecast,  arrival_avg,arrival_std, [], [], "Arrival", max_y_forecast[SELECTED_COMMODITY], color);
 
 	})
 }
 
 
-function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg, std, data_label, max_yaxis=0.5, color="green"){
+function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg, std,anomaly_dates, anomaly_data, data_label, max_yaxis=0.5, color="green"){
 	redraw(chart_id);
 	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	
+	anomaly= []
+	// console.log(date, anomaly_dates)
+
+	for(var i = 0; i < date.length; i++){
+		if(anomaly_dates.includes(date[i])){
+			anomaly.push(value_forecast[i])
+		}else{
+			anomaly.push(null)
+		}
+	}
+
 
 
 
 
 	mean_plus_std = avg.map(function (num, idx) {
-  		return num + std[idx];
+		return num + std[idx];
 	});
 
 	mean_minus_std = avg.map(function (num, idx) {
-  		return num - std[idx];
+		return num - std[idx];
 	});
 
 
@@ -325,6 +343,8 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 		// borderDash: [3,3],
 		fill: false,
 		pointRadius: 0,
+		backgroundColor: "Red",
+		pointStyle: 'rect',
 	}
 
 	s1 = {
@@ -334,6 +354,8 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 		fill: false,
 		pointRadius: 0,
 		// borderWidth: 1,
+		backgroundColor: color,
+		pointStyle: 'rect',
 	}
 
 	s2 = {
@@ -360,11 +382,34 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 		fill: false,
 	}
 
+	s5 = {
+		label:  "Anomaly",
+		data: anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: 'red',
+		hoverBackgroundColor: 'red',
+		pointStyle: 'circle',
+
+	}
+
+	s6 = {
+		data: anomaly_data,
+		hidden: true,
+	}
+
+	
+	// console.log("%cs5", "color:orange",anomaly_dates, data_label, chart_id);
+	// console.log("%cs5", "color:blue",s5);
+
 	datasets = []
 	if(data_label=="Arrival"){
 		datasets = [s0, s1]
 	}else{
-		datasets = [s0, s1, s2, s3, s4]
+		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}
 
 	var myChart = new Chart( ctx, {
@@ -374,22 +419,22 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 			datasets: datasets,
 		},
 		options: {
-	        scales: {
-	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                	parser: 'YYYY-MM-DD',
-	                    unit: 'day',
-	                    day: 'MMM YY',
-	                    displayFormats:{
-	                    	day: 'MMM YY'
-	                    }
-	                },
-	                ticks: {
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD',
+						unit: 'day',
+						day: 'MMM YY',
+						displayFormats:{
+							day: 'MMM YY'
+						}
+					},
+					ticks: {
 	                	// max: 5,
 	                	// step: 60,
 	                	autoSkip: true,
-        				maxTicksLimit: 12
+	                	maxTicksLimit: 12
 	                }
 	            }],
 	            yAxes: [{
@@ -397,29 +442,77 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 	            		max: max_yaxis,
 	            		min: 0,
 	            		// autoSkip: true,
-        				maxTicksLimit: 6,
+	            		maxTicksLimit: 6,
 
 	            	}
 	            }]
 	        },
-	        tooltips: {
-            	mode: 'point'
-        	},
-        	legend: {
-           labels: {
-               filter: function(legendItem, chartData) {
-                if (legendItem.datasetIndex >= 2) {
-                  return false;
-                }
-               return true;
-               }
-            }
-        }
+	        // tooltips: {
+	        // 	mode: 'point',
+	        // 	bodyFontSize: 20,
+	        // 	displayColors: false,
+	        // 	callbacks: {
+	        // 		label: function(t, d){
+	        // 			return ["Anomaly according to dame sont fds, madsf, fsajk pred, js", "sts", "fds gsa", "dfgfds", "rgefds"]
+	        // 		},
+
+
+	        // 	},
+	        // },
+	        legend: {
+	        	labels: {
+	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex == 5) return true;
+	        			if (legendItem.datasetIndex >= 2) {
+	        				return false;
+	        			}
+	        			return true;
+	        		},
+	        		usePointStyle: true,
+	        	}
+	        }
 
 	    }
 	});
 
 	chart_dict[chart_id] = myChart;
+
+	document.getElementById(chart_id).onclick = function (evt) {
+		chart_id = $(this)[0].id;
+		data_type = $(this)[0].dataset.type; // mandi/retail/arrival
+
+		myChart = chart_dict[chart_id];
+
+        var activePoints = myChart.getElementsAtEventForMode(evt, 'point', myChart.options); 
+        // filer array, keep which have _datasetIndex=5
+        active_point = activePoints.filter(p=>{
+        	if(p._datasetIndex == 5) return true;
+        	return false;
+        })?.[0];
+
+        if(!active_point) return;
+
+        console.log(active_point)
+
+        var x = myChart.data.labels[active_point._index];
+        var y = myChart.data.datasets[active_point._datasetIndex].data[active_point._index];
+        console.log(x, y);
+
+        //extract information from x (date), active_point._datasetIndex =6
+        info = myChart.data.datasets[6].data[0][x];
+        info = {
+        	...info,
+        	data_type,
+        }
+
+        showAnomalyModal(info)
+        console.log(info, data_type)
+
+
+        // show modal logic
+    };
+
+
 
 
 }
@@ -461,11 +554,11 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 
 
 	mean_plus_std = mandi_avg.map(function (num, idx) {
-  		return num + mandi_std[idx];
+		return num + mandi_std[idx];
 	});
 
 	mean_minus_std = mandi_avg.map(function (num, idx) {
-  		return num - mandi_std[idx];
+		return num - mandi_std[idx];
 	});
 
 	s1 = {
@@ -521,22 +614,22 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 			datasets: [s1, s2, s3, s4, s5],
 		},
 		options: {
-	        scales: {
-	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                	parser: 'YYYY-MM-DD',
-	                    unit: 'day',
-	                    day: 'MMM YY',
-	                    displayFormats:{
-	                    	day: 'MMM YY'
-	                    }
-	                },
-	                ticks: {
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD',
+						unit: 'day',
+						day: 'MMM YY',
+						displayFormats:{
+							day: 'MMM YY'
+						}
+					},
+					ticks: {
 	                	// max: 5,
 	                	// step: 60,
 	                	autoSkip: true,
-        				maxTicksLimit: 12
+	                	maxTicksLimit: 12
 	                }
 	            }],
 	            yAxes: [{
@@ -560,18 +653,18 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 	            ]
 	        },
 	        tooltips: {
-            	mode: 'point'
-        	},
-        	legend: {
-           labels: {
-               filter: function(legendItem, chartData) {
-                if (legendItem.datasetIndex >= 2) {
-                  return false;
-                }
-               return true;
-               }
-            }
-        }
+	        	mode: 'point'
+	        },
+	        legend: {
+	        	labels: {
+	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex >= 2) {
+	        				return false;
+	        			}
+	        			return true;
+	        		}
+	        	}
+	        }
 
 	    }
 	});
@@ -613,19 +706,19 @@ function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_s
 
 
 	mean_plus_std_mandi = mandi_avg.map(function (num, idx) {
-  		return num + mandi_std[idx];
+		return num + mandi_std[idx];
 	});
 
 	mean_minus_std_mandi = mandi_avg.map(function (num, idx) {
-  		return num - mandi_std[idx];
+		return num - mandi_std[idx];
 	});
 
 	mean_plus_std_retail = retail_avg.map(function (num, idx) {
-  		return num + retail_std[idx];
+		return num + retail_std[idx];
 	});
 
 	mean_minus_std_retail = retail_avg.map(function (num, idx) {
-  		return num - retail_std[idx];
+		return num - retail_std[idx];
 	});
 
 
@@ -698,22 +791,22 @@ function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_s
 			datasets: [s1, s2, s3, s4, s5, s6, s7, s8],
 		},
 		options: {
-	        scales: {
-	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                	parser: 'YYYY-MM-DD',
-	                    unit: 'day',
-	                    day: 'MMM YY',
-	                    displayFormats:{
-	                    	day: 'MMM YY'
-	                    }
-	                },
-	                ticks: {
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD',
+						unit: 'day',
+						day: 'MMM YY',
+						displayFormats:{
+							day: 'MMM YY'
+						}
+					},
+					ticks: {
 	                	// max: 5,
 	                	// step: 60,
 	                	autoSkip: true,
-        				maxTicksLimit: 12
+	                	maxTicksLimit: 12
 	                }
 	            }],
 	            yAxes: [{
@@ -726,18 +819,18 @@ function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_s
 	            ]
 	        },
 	        tooltips: {
-            	mode: 'point'
-        	},
-        	legend: {
-           labels: {
-               filter: function(legendItem, chartData) {
-                if (legendItem.datasetIndex >= 2) {
-                  return false;
-                }
-               return true;
-               }
-            }
-        }
+	        	mode: 'point'
+	        },
+	        legend: {
+	        	labels: {
+	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex >= 2) {
+	        				return false;
+	        			}
+	        			return true;
+	        		}
+	        	}
+	        }
 
 	    }
 	});
@@ -776,11 +869,11 @@ function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_lab
 
 
 	mean_plus_std = avg.map(function (num, idx) {
-  		return num + std[idx];
+		return num + std[idx];
 	});
 
 	mean_minus_std = avg.map(function (num, idx) {
-  		return num - std[idx];
+		return num - std[idx];
 	});
 
 
@@ -828,22 +921,22 @@ function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_lab
 			datasets: [s1, s2, s3, s4],
 		},
 		options: {
-	        scales: {
-	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                	parser: 'YYYY-MM-DD',
-	                    unit: 'day',
-	                    day: 'MMM YY',
-	                    displayFormats:{
-	                    	day: 'MMM YY'
-	                    }
-	                },
-	                ticks: {
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD',
+						unit: 'day',
+						day: 'MMM YY',
+						displayFormats:{
+							day: 'MMM YY'
+						}
+					},
+					ticks: {
 	                	// max: 5,
 	                	// step: 60,
 	                	autoSkip: true,
-        				maxTicksLimit: 12
+	                	maxTicksLimit: 12
 	                }
 	            }],
 	            yAxes: [{
@@ -857,18 +950,18 @@ function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_lab
 	            ]
 	        },
 	        tooltips: {
-            	mode: 'point'
-        	},
-        	legend: {
-           labels: {
-               filter: function(legendItem, chartData) {
-                if (legendItem.datasetIndex >= 2) {
-                  return false;
-                }
-               return true;
-               }
-            }
-        }
+	        	mode: 'point'
+	        },
+	        legend: {
+	        	labels: {
+	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex >= 2) {
+	        				return false;
+	        			}
+	        			return true;
+	        		}
+	        	}
+	        }
 
 	    }
 	});
@@ -917,11 +1010,11 @@ function plotDispersion1(chart_id, date, disp, avg, std, data_label, max_yaxis, 
 
 
 	mean_plus_std = avg.map(function (num, idx) {
-  		return num + std[idx];
+		return num + std[idx];
 	});
 
 	mean_minus_std = avg.map(function (num, idx) {
-  		return num - std[idx];
+		return num - std[idx];
 	});
 
 
@@ -969,22 +1062,22 @@ function plotDispersion1(chart_id, date, disp, avg, std, data_label, max_yaxis, 
 			datasets: [s1, s2, s3, s4],
 		},
 		options: {
-	        scales: {
-	            xAxes: [{
-	                type: 'time',
-	                time: {
-	                	parser: 'YYYY-MM-DD',
-	                    unit: 'day',
-	                    day: 'MMM YY',
-	                    displayFormats:{
-	                    	day: 'MMM YY'
-	                    }
-	                },
-	                ticks: {
+			scales: {
+				xAxes: [{
+					type: 'time',
+					time: {
+						parser: 'YYYY-MM-DD',
+						unit: 'day',
+						day: 'MMM YY',
+						displayFormats:{
+							day: 'MMM YY'
+						}
+					},
+					ticks: {
 	                	// max: 5,
 	                	// step: 60,
 	                	autoSkip: true,
-        				maxTicksLimit: 12
+	                	maxTicksLimit: 12
 	                }
 	            }],
 	            yAxes: [{
@@ -998,18 +1091,18 @@ function plotDispersion1(chart_id, date, disp, avg, std, data_label, max_yaxis, 
 	            ]
 	        },
 	        tooltips: {
-            	mode: 'point'
-        	},
-        	legend: {
-           labels: {
-               filter: function(legendItem, chartData) {
-                if (legendItem.datasetIndex >= 2) {
-                  return false;
-                }
-               return true;
-               }
-            }
-        }
+	        	mode: 'point'
+	        },
+	        legend: {
+	        	labels: {
+	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex >= 2) {
+	        				return false;
+	        			}
+	        			return true;
+	        		}
+	        	}
+	        }
 
 	    }
 	});
@@ -1062,7 +1155,7 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 			label.push(mandi_name[i] + " (" + state_name[i] + ")")
 		}
 	}
-		
+
 
 
 
@@ -1079,12 +1172,12 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 		data: s1,
 		options: {
 			title: {
-                display: true,
-                text: '10 Most Volatile Mandis'
-            },
-            legend: {
-                display: false,
-            },
+				display: true,
+				text: '10 Most Volatile Mandis'
+			},
+			legend: {
+				display: false,
+			},
 		}
 	});
 

@@ -1,3 +1,4 @@
+console.clear();
 $( document ).ready(function() {
 	setCSRF();	
 	$('.modal').modal();

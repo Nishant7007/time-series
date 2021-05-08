@@ -61,7 +61,7 @@ max_y_forecast  = {
 	"Rice": 4000,
 	"Masur Dal": 10000,
 	"Mustard Oil": 14000,
-	"Onion": 5000,
+	"Onion": 10000,
 	"Green Gram Dal (Moong Dal)": 14000,
 
 }
