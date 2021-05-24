@@ -4,7 +4,7 @@ Brotli==1.0.9
 certifi==2020.6.20
 chardet==3.0.4
 csscompressor==0.9.5
-Django==3.0.4
+Django==3.0.14
 django-compress-staticfiles==1.0.1b0
 django-livereload-server==0.3.2
 gunicorn==20.0.4
