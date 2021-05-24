@@ -25,7 +25,7 @@ function requestPostData(url, data) {
 		$.ajax({
 			url: url,
 			type: 'POST',
-			async: false,
+			// async: false,
 
 			contentType: 'application/json',
 			data: JSON.stringify(data),
@@ -82,5 +82,7 @@ function redraw(chart_id){
 	}
 }
 
-
+function isMobileDevice(){
+    return ( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+}
 

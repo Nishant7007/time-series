@@ -12,20 +12,26 @@ commodity_img = {
 
 
 
-
+page_1st = true;
 
 function getNewsFeed(){
 	console.log("getNewsFeed")
+	$("#id_news_list").empty();
 	date = $("#id_news_feed_date").val();
 	commodity = $("#id_news_feed_commoodity").val();
 	showNewsFeedByDate(date, commodity);
+	showNonAnomalousAndArticleNewsFeedByDate(date, commodity)
 	showAnomalousAndArticleNewsFeedByDate(date, commodity);
 	showAnomalousAndNoArticleNewsFeedByDate(date, commodity);
 	showVolatilityNewsFeedByDate(date, commodity);
 
 
 	SELECTED_COMMODITY = capitalizeFirstLetter(commodity);
-	reSequence();
+	if(SELECTED_COMMODITY == "All") SELECTED_COMMODITY = "Onion";
+	if(!page_1st){
+		reSequence();
+	}
+	page_1st = false;
 }
 
 
@@ -110,7 +116,7 @@ function requestVolatilityModal(commodity, date){
 		vol = data["vol"];
 
 		// plot
-		plotMostVolatileModal("most_volatile_chart", mandi_name, state_name, vol);
+		plotMostVolatileModal("most_volatile_chart_news_feed_modal", mandi_name, state_name, vol);
 
 		$("#volatileModal").modal('open');
 
@@ -208,6 +214,7 @@ function setAnomalousAndArticleNewsFeedByDate(news_data){
 		mandi_name = data["MANDINAME"];
 		start_date = data["STARTDATE"];
 
+		page_url = `/agri_req/get_commodity_page/${commodity_name}/${mandi_name}/${state_name}/${published_date}`
 
 
 		html += `
@@ -224,7 +231,7 @@ function setAnomalousAndArticleNewsFeedByDate(news_data){
 					</div>
 
 					<div class="col s2">
-						<a href="/agri_req/landing_page/${commodity_name}" class="secondary-content" target="_blank">
+						<a href="${page_url}" class="secondary-content" target="_blank">
 							<i class="material-icons">launch</i>
 						</a>
 					</div>
@@ -288,7 +295,10 @@ function setAnomalousAndNoArticleNewsByDate(news_data){
 		state_name = data["STATENAME"];
 		mandi_name = data["MANDINAME"];
 		start_date = data["STARTDATE"];
+		end_date = data["ENDDATE"];
+		
 
+		page_url = `/agri_req/get_commodity_page/${commodity_name}/${mandi_name}/${state_name}/${end_date}`
 
 
 		html += `
@@ -304,7 +314,7 @@ function setAnomalousAndNoArticleNewsByDate(news_data){
 					</div>
 
 					<div class="col s2">
-						<a href="/agri_req/landing_page/${commodity_name}" class="secondary-content" target="_blank">
+						<a href="${page_url}" class="secondary-content" target="_blank">
 							<i class="material-icons">launch</i>
 						</a>
 					</div>
@@ -322,8 +332,62 @@ function setAnomalousAndNoArticleNewsByDate(news_data){
 
 
 
+///////////////////Non Anomalous +  Article //////////////
+
+async function showNonAnomalousAndArticleNewsFeedByDate(date, commodity){
+	data = {
+		date,
+		commodity,
+	}
+
+	let news_data = await requestPostData("/agri_req/getNonAnomalousAndArticleNewsFeedByDate", {"data": data});
+	news_data = news_data["news"];
+
+	setNonAnomalousAndArticleNewsByDate(news_data);
+
+}
+
+function setNonAnomalousAndArticleNewsByDate(news_data){
+	var html = ``;
+	console.log(news_data);
+	for(var i = 0; i < news_data.length; i++){
+		data = news_data[i]
+
+		commodity_name = data["COMMODITY"];
+		published_date = data["PUBLISHEDDATE"]
+		article_url = data["ARTICLEURL"]
+		article_title = data["ARTICLETITLE"]
 
 
+		html += `
+			<li class="collection-item">
+				<div class="row" style="margin-bottom: 0px">
+					<div class="col s2">
+						<span style="float: left;"> <img class="responsive-img" style="height: 40px" src="/agri_static/home/img/${commodity_img[commodity_name]}" alt=""></span>
+					</div>
+					<div class="col s8">
+						<span>${published_date}</span>
+						<br>
+						<span class="news_title">${article_title}</span>
+					</div>
+
+					<div class="col s2">
+						<a href="${article_url}" class="secondary-content" target="_blank">
+							<i class="material-icons">launch</i>
+						</a>
+					</div>
+				</div>
+			</li>
+
+		`
+	}
+
+	$("#id_news_list").append(html);
+
+}
+
+
+///////////////////END Non Anomalous +  Article //////////////
 
 
 
@@ -353,7 +417,7 @@ function showNewsFeedByDate(date, commodity){
 
 function setNewsFeedByDate(news_list){
 	var html = ``;
-	$("#id_news_list").empty();
+	// $("#id_news_list").empty();
 
 	// if(news_list.length == 0){
 	// 	$("#id_news_list").append(`<span>No news found</span>`)

@@ -15,13 +15,20 @@ $(document).ready(function($) {
 
 	setNewsFeedSelector();
 
+	date = $("#id_news_feed_date").val();
+	commodity = $("#id_news_feed_commoodity").val();
+
 	
     $('.modal').modal();
+    // getNewsFeed();
     // plotMostVolatile()
-    showAnomalousAndArticleNews();
-    showNonAnomalousAndArticleNews();
-    showVolatileNews();
-    showAnomalousAndNoArticleNews();
+    // showAnomalousAndArticleNews();
+    // showNonAnomalousAndArticleNews();
+    // showVolatileNews();
+    // showVolatilityNewsFeedByDate(date, commodity);
+    // showAnomalousAndNoArticleNews();
+
+    getNewsFeed();
 
 });
 
@@ -85,7 +92,7 @@ function setVolatileNews(vol_news_data){
 					</div>
 
 					<div class="col s2">
-						<button class="launch_button secondary-content" onclick="requestVolatilityModal('${commodity_name}')">
+						<button class="launch_button secondary-content" onclick="requestVolatilityModal('${commodity_name}', '${date}')">
 							<i class="material-icons">launch</i>
 						</button>
 						

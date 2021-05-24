@@ -34,7 +34,9 @@ function getMandisByState(state, commodity){
 }
 
 function getStatesByCommodity(commodity){
+	if(commodity.toUpperCase()=="ALL") commodity = "Onion"
 	state_mandis = COMMODITY_MAP["state_mandi"][commodity];
+	console.log(commodity, COMMODITY_MAP["state_mandi"])
 	return Object.keys(state_mandis);
 }
 
@@ -88,7 +90,7 @@ function setCommdotiySelect(){
 
 	$("#" + id_select_commodity).on('change', function() {
 		SELECTED_COMMODITY = $(this).val();
-		reSequence()
+		reSequence();
 
 	});
 
@@ -100,6 +102,7 @@ function setCommdotiySelect(){
 
 // set default state mandi
 function setStateMandiSelect(){
+
 	states =  getStatesByCommodity(SELECTED_COMMODITY);
 
 

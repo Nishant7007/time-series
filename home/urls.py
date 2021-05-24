@@ -15,6 +15,8 @@ urlpatterns = [
 	path('get_most_volatile_mandi', views.get_most_volatile_mandi, name="get_most_volatile_mandi"),
 
 
+	path('get_commodity_page/<str:commodity>/<str:mandi>/<str:state>/<str:date>', views.get_commodity_page, name="get_commodity_page"),
+
 
 	# path('get_forecast_by_date', views.get_forecast_by_date, name="get_forecast_by_date"),
 	# path('get_mandi_data_1_year_by_date', views.get_mandi_data_1_year_by_date, name="get_mandi_data_1_year_by_date"),
@@ -37,7 +39,7 @@ urlpatterns = [
 
 
 	path('landing_page', views.landing_page, name='landing_page'),
-	path('landing_page/<commodity>',views.landing_page_commodity, name='landing_page_commodity'),
+	path('landing_page/<str:commodity>/<str:date>',views.landing_page_commodity, name='landing_page_commodity'),
 	path('news_feed_page_past', views.news_feed_page_past, name='news_feed_page_past'),
 
 	path('get_forecasted_mandi_1_month', views.get_forecasted_mandi_1_month, name='get_forecasted_mandi_1_month'),

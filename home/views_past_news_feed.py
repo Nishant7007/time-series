@@ -94,10 +94,10 @@ def getNonAnomalousAndArticleNewsFeedByDate(request):
 	commodity = data["commodity"]
 
 	d1 = pd.to_datetime(date)
-	dt = pd.to_timedelta(7, unit='days')
+	dt = pd.to_timedelta(14, unit='days')
 	d2 = d1 - dt
 
-	file_path = news_path + "/notAnomalousAndArticlePast.csv"
+	file_path = news_path + "/notAnomalousAndArticle.csv"
 	df = pd.read_csv(file_path)
 	df = df.fillna("")
 
@@ -135,7 +135,7 @@ def getAnomalousAndArticleNewsFeedByDate(request):
 	commodity = data["commodity"]
 
 	d1 = pd.to_datetime(date)
-	dt = pd.to_timedelta(7, unit='days')
+	dt = pd.to_timedelta(14, unit='days')
 	d2 = d1 - dt
 
 	file_path = news_path + "/anomalousAndArticlePast.csv"

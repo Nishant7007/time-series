@@ -71,7 +71,7 @@
 			align-self: flex-start; /* <-- this is the fix */
 			/*background-color: red;   Not necessary -- for example only */
 		}
-		.modal {max-height: 90% !important } /* increase the width and height! */
+		
 
 
 		<style type="text/css">
@@ -144,14 +144,16 @@
 
 		<div class="grid">
 			<div class="left_col">
-				<!-- {% include "home/landing_page_content.html" %} -->
-				{% include "home/landing_page_item/forecast.html" %}
-				{% include "home/landing_page_item/last_1yr.html" %}
-				{% include "home/landing_page_item/arrival_vs_mandi.html" %}
-				{% include "home/landing_page_item/mandi_vs_retail.html" %}
-				{% include "home/landing_page_item/volatility_mandi_retail.html" %}
-				{% include "home/landing_page_item/most_volatile.html" %}
-				{% include "home/landing_page_item/dispersion_mandi_retail.html" %}
+				<div  style="margin: 10px">
+					<!-- {% include "home/landing_page_content.html" %} -->
+					{% include "home/landing_page_item/forecast.html" %}
+					{% include "home/landing_page_item/last_1yr.html" %}
+					{% include "home/landing_page_item/arrival_vs_mandi.html" %}
+					{% include "home/landing_page_item/mandi_vs_retail.html" %}
+					{% include "home/landing_page_item/volatility_mandi_retail.html" %}
+					{% include "home/landing_page_item/most_volatile.html" %}
+					{% include "home/landing_page_item/dispersion_mandi_retail.html" %}
+				</div>
 
 			</div>
 			<div class="news_col">
