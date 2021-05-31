@@ -10,7 +10,7 @@ import calendar
 from django.views.decorators.csrf import csrf_exempt
 import numpy as np
 import json
-from home.views_news_feed import *
+# from home.views_news_feed import *
 from home.views_past_news_feed import *
 from home.views_commodity_page import *
 
@@ -297,10 +297,12 @@ def get_forecast(request):
     _, mandi_price_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
     _, mandi_price_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast, rolling_window=rolling_window)
 
+
     _, retail_price_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
     _, retail_price_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast, rolling_window=rolling_window)
 
     _, arrival_original = read_original_data(aggregate=False, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
+    
     date, arrival_forecast = read_forecast_data(aggregate=False, commodity_name=commodity_name, data_type="Arrival", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_forecast, rolling_window=rolling_window)
 
     _, mandi_avg, mandi_std = read_original_data(aggregate=True, commodity_name=commodity_name, data_type="Price", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date_orig, rolling_window=rolling_window)
@@ -545,6 +547,10 @@ def get_volatility_last_3yr(request):
     date, retail_vol = read_volatility_file(aggregate=False, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date)
     date, retail_avg, retail_std = read_volatility_file(aggregate=True, commodity_name=commodity_name, data_type="Retail", mandi_name=mandi_name, state_name=state_name, from_date=from_date, to_date=to_date)
 
+    mandi_anomalous_date, mandi_anomalous_data = getVolatilityAnomolyShowDate(commodity_name, mandi_name, state_name, from_date, to_date, "Price", True)
+    retail_anomalous_date, retail_anomalous_data = getVolatilityAnomolyShowDate(commodity_name, mandi_name, state_name, from_date, to_date, "Retail", True)
+
+
     response = {
         "date": date,
 
@@ -556,6 +562,12 @@ def get_volatility_last_3yr(request):
 
         "mandi_std": mandi_std,
         "retail_std": retail_std,
+
+        "mandi_anomalous_date": mandi_anomalous_date,
+        "retail_anomalous_date": retail_anomalous_date,
+
+        "mandi_anomalous_data": mandi_anomalous_data,
+        "retail_anomalous_data": retail_anomalous_data,
 
     }
     return JsonResponse({"data": response})
@@ -789,6 +801,161 @@ def getVolatilityNews(request):
     }
 
     return JsonResponse({"data": response})
+
+
+
+
+@csrf_exempt
+def getAnomolousCommodity(request):
+    data = json.loads(request.body)["data"]
+    date = data["date"]
+
+    d1 = pd.to_datetime(date)
+
+     # 1st day of same month
+    d1 = d1 - pd.Timedelta('1 day') * (d1.day - 1)
+
+    file_path = f"{data_path}/mostAnomalousCommodities.csv"
+
+    df = pd.read_csv(file_path)
+
+    df['DATE'] = pd.to_datetime(df['DATE'], format="%Y-%m-%d")
+    df = df[(df['DATE'] == d1)]
+    df["DATE"] = df["DATE"].astype(str)
+
+    # sort by SUM and Dispersion value, high to low
+    df = df.sort_values(by=["SUM", "PRICE_DISPERSION"], ascending=False)
+
+     # get top two anomlous 
+    df = df.head(2)
+    df = df.drop_duplicates(subset=['COMMODITY'])
+
+    # commodity = df["COMMODITY"].to_list()
+    # sum_anomaly = df["SUM"].to_list()
+    # dispersion = df["PRICE_DISPERSION"].to_list()
+
+    anomaly_data = df.to_dict('records')
+
+    response = {
+        "anomaly_data":anomaly_data
+    }
+
+
+
+    # response = {
+    #     "commodity": commodity,
+    #     "sum_anomaly": sum_anomaly,
+    #     "dispersion": dispersion,
+    # }
+
+    return JsonResponse({"data": response})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@csrf_exempt
+def getMostAnomolousMandi(request):
+    data = json.loads(request.body)["data"]
+    commodity = data["commodity"]
+    date = data["date"]
+
+    d1 = pd.to_datetime(date)
+
+    # 1st day of same month
+    d1 = d1 - pd.Timedelta('1 day') * (d1.day - 1)
+
+    data_type = "Price"
+    file_path = f"{data_path}/{commodity}/NormalOrAnomalous/MOST_ANOMALOUS_MANDIS_CENTRES/{data_type}.csv"
+
+    df = pd.read_csv(file_path)
+    df = df.fillna("")
+
+
+    df['DATE'] = pd.to_datetime(df['DATE'], format="%Y-%m-%d")
+    df = df[(df['DATE'] == d1)]
+    df["DATE"] = df["DATE"].astype(str)
+
+    # sort by SUM and VOLATILITY value, high to low
+    df = df.sort_values(by=["SUM", "VOLATILITY"], ascending=False)
+
+    # get top two anomlous 
+    df = df.head(2)
+    df["COMMODITY"] = commodity
+
+
+    # mandi_name = df["MANDINAME"].to_list()
+    # state_name = df["STATENAME"].to_list()
+    # vol = df["VOLATILITY"].to_list()
+    # sum_anomaly = df["SUM"].to_list()
+
+    # [{'name': name, 'job': job, 'status': status} for mandi_name,job,status in zip(names,jobs,statuses)]
+    anomaly_data = df.to_dict('records')
+
+    response = {
+        "anomaly_data":anomaly_data 
+    }
+
+    return JsonResponse({"data": response})
+
+
+    
+
+
+
+def getVolatilityAnomolyShowDate(commodity, mandi_name, state_name, from_date, to_date, data_type, filter=False):
+    file_path = data_path + "/" + commodity + "/NormalOrAnomalous/VOLATILITY/" + data_type + ".csv"
+    from_date = pd.to_datetime(from_date, format="%Y-%m-%d") 
+    to_date = pd.to_datetime(to_date, format="%Y-%m-%d")
+    df = pd.read_csv(file_path)
+
+    # change this
+    df = df[df["STATENAME"] == state_name]
+    df = df[df["MANDINAME"] == mandi_name]
+
+    df['DATE'] = pd.to_datetime(df['DATE'], format='%Y-%m-%d')
+
+    df = df[(df["DATE"] >= from_date) & (df["DATE"] <= to_date)]
+    df["DATE"] = df["DATE"].astype(str)
+
+    
+    
+
+    if filter:
+        df["anomaly_count"] = 0
+        df["Year"] = pd.to_datetime(df['DATE']).dt.year
+
+        df.loc[df["LASTMONTH"] == "Anomaly", "anomaly_count"] += 1
+        df.loc[df["SAMEMONTH"] == "Anomaly", "anomaly_count"] += 1
+        df.loc[df["LASTYEAR"] == "Anomaly", "anomaly_count"] += 1
+
+        df = df.sort_values(by=["anomaly_count"], ascending=False)
+
+        df = df.groupby('Year').head(2)
+
+        # df = df.drop_duplicates(subset=['Year'])
+
+    df = df.head(6)
+
+    df = df.replace(np.nan, 'None')
+
+    df = df.set_index('DATE', drop=False)
+    anomaly_date = df["DATE"].to_list()
+    anomaly_data = df.to_dict(orient='index')
+
+    # anomaly_data = {s_date: {} for s_date in anomaly_date}
+
+    return anomaly_date, [anomaly_data]
+
 
 
 

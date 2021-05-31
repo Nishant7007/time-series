@@ -14,7 +14,7 @@ import json
 
 data_path = "data/webpage"
 news_path = "data/webpage/NEWS FEED"
-news_path2 = "data/webpage/NEWS"
+# news_path2 = "data/webpage/NEWS"
 
 
 
@@ -138,7 +138,7 @@ def getAnomalousAndArticleNewsFeedByDate(request):
 	dt = pd.to_timedelta(14, unit='days')
 	d2 = d1 - dt
 
-	file_path = news_path + "/anomalousAndArticlePast.csv"
+	file_path = news_path + "/anomalousAndArticle.csv"
 	
 	df = pd.read_csv(file_path)
 	df = df.fillna("")
@@ -188,7 +188,7 @@ def getAnomalousAndNoArticleNewsFeedByDate(request):
 	dt = pd.to_timedelta(7, unit='days')
 	d2 = d1 - dt
 
-	file_path = news_path + "/anomalousAndNoArticlePast.csv"
+	file_path = news_path + "/anomalousAndNoArticle.csv"
 	df = pd.read_csv(file_path)
 	df = df.fillna("")
 

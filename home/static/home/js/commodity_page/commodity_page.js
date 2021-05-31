@@ -287,6 +287,12 @@ async function plotVolatilityChart(){
 	let retail_avg = chart_data["retail_avg"]
 	let retail_std =  chart_data["retail_std"]
 
+	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
+	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
+
+	let retail_anomalous_date = chart_data["retail_anomalous_date"]
+	let retail_anomalous_data = chart_data["retail_anomalous_data"]
+
 	let date = chart_data["date"];
 
 
@@ -299,6 +305,8 @@ async function plotVolatilityChart(){
 		std: mandi_std,
 		data_label: "Mandi Volatility",
 		color: "green",
+		anomalous_date: mandi_anomalous_date,
+		anomalous_data: mandi_anomalous_data,
 	}
 
 	drawChartVolatility(opts)
@@ -313,6 +321,8 @@ async function plotVolatilityChart(){
 		std: retail_std,
 		data_label: "Retail Volatility",
 		color: "blue",
+		anomalous_date: retail_anomalous_date,
+		anomalous_data: retail_anomalous_data,
 	}
 
 	drawChartVolatility(opts)

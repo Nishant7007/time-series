@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-	path('', views.base, name='home'),
+	# path('', views.base, name='home'),
 	
 
 	path('get_forecast', views.get_forecast, name="get_forecast"),
@@ -33,11 +33,15 @@ urlpatterns = [
 	path('getDispersionNews', views.getDispersionNews, name='getDispersionNews'),
 	path('getVolatilityNews', views.getVolatilityNews, name='getVolatilityNews'),
 
+	#return most anomolus mandi given commodity
+	path('getMostAnomolousMandi', views.getMostAnomolousMandi, name='getMostAnomolousMandi'),
+	path('getAnomolousCommodity', views.getAnomolousCommodity, name='getAnomolousCommodity'),
+	
 	# delete this url
 	path('getAnomalyData', views.getAnomalyData, name='getAnomalyData'),
 	# path('getAnomalyPage', views.getAnomalyPage, name='getAnomalyPage'),
 
-
+	path('', views.landing_page, name='landing_page'),
 	path('landing_page', views.landing_page, name='landing_page'),
 	path('landing_page/<str:commodity>/<str:date>',views.landing_page_commodity, name='landing_page_commodity'),
 	path('news_feed_page_past', views.news_feed_page_past, name='news_feed_page_past'),
@@ -48,10 +52,10 @@ urlpatterns = [
 
 
 
-	path('getVolatilityNewsFeed', views.getVolatilityNewsFeed, name="getVolatilityNewsFeed"),
-	path('getNonAnomalousAndArticleNewsFeed', views.getNonAnomalousAndArticleNewsFeed, name="getNonAnomalousAndArticleNewsFeed"),
-	path('getAnomalousAndArticleNewsFeed', views.getAnomalousAndArticleNewsFeed, name="getAnomalousAndArticleNewsFeed"),
-	path('getAnomalousAndNoArticleNewsFeed', views.getAnomalousAndNoArticleNewsFeed, name="getAnomalousAndNoArticleNewsFeed"),
+	# path('getVolatilityNewsFeed', views.getVolatilityNewsFeed, name="getVolatilityNewsFeed"),
+	# path('getNonAnomalousAndArticleNewsFeed', views.getNonAnomalousAndArticleNewsFeed, name="getNonAnomalousAndArticleNewsFeed"),
+	# path('getAnomalousAndArticleNewsFeed', views.getAnomalousAndArticleNewsFeed, name="getAnomalousAndArticleNewsFeed"),
+	# path('getAnomalousAndNoArticleNewsFeed', views.getAnomalousAndNoArticleNewsFeed, name="getAnomalousAndNoArticleNewsFeed"),
 
 	path('getNewsByDate', views.getNewsByDate, name='getNewsByDate'),
 

@@ -1,3 +1,7 @@
+
+no_arrival = ["GREEN GRAM DAL (MOONG DAL)", "MASUR DAL", "MUSTARD OIL"]
+
+
 jQuery(document).ready(function($) {
 	$(".dropdown-trigger").dropdown();
 	$('select').formSelect();
@@ -384,6 +388,8 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 
 	
 	anomaly= []
+
+	// old method showing full forcast don't delete
 	for(var i = 0; i < date.length; i++){
 		if(anomaly_dates.includes(date[i])){
 			anomaly.push(value_forecast[i])
@@ -391,6 +397,31 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 			anomaly.push(null)
 		}
 	}
+
+	// new change
+	// for(var i = 0; i < date.length - 30; i++){
+	// 	if(i < date.length - 31)
+	// 		value_forecast[i] = null;
+	// 	if(data_label != "Arrival"){
+	// 		if(anomaly_dates.includes(date[i])){
+	// 			anomaly.push(value_original[i])
+	// 		}else{
+	// 			anomaly.push(null)
+	// 		}
+
+	// 	}
+		
+	// }
+	
+	// value_forecast[date.length - 31] = value_original[date.length - 31]
+	// for(var i = date.length - 31; i < date.length; i++){
+	// 	if(anomaly_dates.includes(date[i])){
+	// 		anomaly.push(value_forecast[i])
+	// 	}else{
+	// 		anomaly.push(null)
+	// 	}
+	// }
+	// new change end
 
 
 
@@ -1059,11 +1090,17 @@ function plotChartVolatilityMandiRetail(data, chart_ids, color){
 		retail_avg = data["retail_avg"]
 		retail_std =  data["retail_std"]
 
+		mandi_anomalous_date = data["mandi_anomalous_date"]
+		mandi_anomalous_data = data["mandi_anomalous_data"]
+
+		retail_anomalous_date = data["retail_anomalous_date"]
+		retail_anomalous_data = data["retail_anomalous_data"]
+
 		date = data["date"];
 		
 
-		plotChartVolatilityMandiRetail1(chart_ids[0], date, mandi_vol, mandi_avg, mandi_std, "Mandi Volatility", undefined, color);
-		plotChartVolatilityMandiRetail1(chart_ids[1], date, retail_vol, retail_avg, retail_std, "Retail Volatility" , undefined, color);
+		plotChartVolatilityMandiRetail1(chart_ids[0], date, mandi_vol, mandi_avg, mandi_std, mandi_anomalous_date, mandi_anomalous_data,  "Mandi Volatility", undefined, color);
+		plotChartVolatilityMandiRetail1(chart_ids[1], date, retail_vol, retail_avg, retail_std, retail_anomalous_date, retail_anomalous_data, "Retail Volatility" , undefined, color);
 
 
 	});
@@ -1071,10 +1108,22 @@ function plotChartVolatilityMandiRetail(data, chart_ids, color){
 }
 
 
-function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_label, max_yaxis, color){
+function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std,  anomalous_date, anomalous_data,data_label, max_yaxis, color){
 	max_yaxis = undefined;
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	anomaly= []
+	for(var i = 0; i < date.length; i++){
+		if(anomalous_date.includes(date[i])){
+			anomaly.push(vol[i])
+		}else{
+			anomaly.push(null)
+		}
+	}
+
+	// console.log(anomaly)
+	// console.log(anomalous_data)
 
 
 	mean_plus_std = avg.map(function (num, idx) {
@@ -1123,14 +1172,32 @@ function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_lab
 		fill: false,
 	}
 
-	
+	s5 = {
+		label:  "Anomaly",
+		data: anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: color,
+		pointStyle: 'circle',
+
+	}
+
+	s6 = {
+		data: anomalous_data,
+		hidden: true,
+	}
+
+	// console.log(s6)
 	
 
 	var myChart = new Chart( ctx, {
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4],
+			datasets: [s1, s2, s3, s4, s5, s6],
 		},
 		options: {
 			scales: {

@@ -16,15 +16,39 @@ function drawChartForecast({
 
 	anomaly= []
 
-	if(data_label != "Arrival"){
-		for(var i = 0; i < date.length; i++){
-			if(anomaly_dates.includes(date[i])){
-				anomaly.push(price_forecast[i])
-			}else{
-				anomaly.push(null)
-			}
+
+	for(var i = 0; i < date.length; i++){
+		if(anomaly_dates.includes(date[i])){
+			anomaly.push(price_forecast[i])
+		}else{
+			anomaly.push(null)
 		}
 	}
+
+	// new change
+	// for(var i = 0; i < date.length - 30; i++){
+	// 	if(i < date.length - 31)
+	// 		price_forecast[i] = null;
+	// 	if(data_label != "Arrival"){
+	// 		if(anomaly_dates.includes(date[i])){
+	// 			anomaly.push(price_original[i])
+	// 		}else{
+	// 			anomaly.push(null)
+	// 		}
+
+	// 	}
+		
+	// }
+	// price_forecast[date.length - 31] = price_original[date.length - 31]
+	// for(var i = date.length - 31; i < date.length; i++){
+	// 	if(anomaly_dates.includes(date[i])){
+	// 		anomaly.push(price_forecast[i])
+	// 	}else{
+	// 		anomaly.push(null)
+	// 	}
+	// }
+	// new change
+
 	
 	mean_plus_std = avg.map(function (num, idx) {
 		return num + std[idx];
@@ -819,9 +843,20 @@ function drawChartVolatility({
 	std,
 	data_label,
 	color,
+	anomalous_date,
+	anomalous_data
 }){
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	anomaly= []
+	for(var i = 0; i < date.length; i++){
+		if(anomalous_date.includes(date[i])){
+			anomaly.push(vol[i])
+		}else{
+			anomaly.push(null)
+		}
+	}
 
 	mean_plus_std = avg.map(function (num, idx) {
 		return num + std[idx];
@@ -864,6 +899,24 @@ function drawChartVolatility({
 		fill: false,
 	}
 
+	s5 = {
+		label:  "Anomaly",
+		data: anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: color,
+		pointStyle: 'circle',
+
+	}
+
+	s6 = {
+		data: anomalous_data,
+		hidden: true,
+	}
+
 	
 	
 
@@ -871,7 +924,7 @@ function drawChartVolatility({
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4],
+			datasets: [s1, s2, s3, s4, s5, s6],
 		},
 		options: {
 			scales: {
