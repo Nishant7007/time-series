@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     # 'volatility',
     'home',
     
-    'livereload',
+    # 'livereload',
 ]
 
 MIDDLEWARE = [
