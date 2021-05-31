@@ -258,9 +258,9 @@ def read_forecast_data(aggregate=False, commodity_name="Onion", data_type="Price
 @csrf_exempt
 def get_forecast(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
-    mandi_name = data["mandi_name"]
-    state_name = data["state_name"]
+    commodity_name = data["commodity_name"].upper()
+    mandi_name = data["mandi_name"].upper()
+    state_name = data["state_name"].upper()
 
     # print(commodity_name, mandi_name, state_name)
 
