@@ -38,7 +38,7 @@ async function setAnomalyChartModal(info, chart_type){
 	$("#id_same_month_anomaly_text_modal").hide();
 	$("#id_last_month_anomaly_text_modal").hide();
 	$("#id_last_yr_anomaly_text_modal").hide();
-	// $("#id_anomaly_classifer_text_modal").hide();
+	$("#id_anomaly_classifer_text_modal").hide();
 	
 
 

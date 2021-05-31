@@ -28,7 +28,7 @@ def readFile(file_path):
 def getVolatilityNewsFeedByDate(request):
 	data = json.loads(request.body)["data"]
 	date = data["date"]
-	commodity = data["commodity"]
+	commodity = data["commodity"].upper()
 
 	d1 = pd.to_datetime(date)
 
@@ -91,7 +91,7 @@ def getVolatilityNewsFeedByDate(request):
 def getNonAnomalousAndArticleNewsFeedByDate(request):
 	data = json.loads(request.body)["data"]
 	date = data["date"]
-	commodity = data["commodity"]
+	commodity = data["commodity"].upper()
 
 	d1 = pd.to_datetime(date)
 	dt = pd.to_timedelta(14, unit='days')
@@ -132,7 +132,7 @@ def getNonAnomalousAndArticleNewsFeedByDate(request):
 def getAnomalousAndArticleNewsFeedByDate(request):
 	data = json.loads(request.body)["data"]
 	date = data["date"]
-	commodity = data["commodity"]
+	commodity = data["commodity"].upper()
 
 	d1 = pd.to_datetime(date)
 	dt = pd.to_timedelta(14, unit='days')
@@ -182,7 +182,7 @@ def getAnomalousAndArticleNewsFeedByDate(request):
 def getAnomalousAndNoArticleNewsFeedByDate(request):
 	data = json.loads(request.body)["data"]
 	date = data["date"]
-	commodity = data["commodity"]
+	commodity = data["commodity"].upper()
 
 	d1 = pd.to_datetime(date)
 	dt = pd.to_timedelta(7, unit='days')
@@ -234,7 +234,7 @@ def getAnomalousAndNoArticleNewsFeedByDate(request):
 def getMostVolatileMandiByDate(request):
 	data = json.loads(request.body)["data"]
 	date = data["date"]
-	commodity = data["commodity"]
+	commodity = data["commodity"].upper()
 
 	d1 = pd.to_datetime(date)
 	# 1st day of same month

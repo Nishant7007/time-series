@@ -47,7 +47,7 @@ def getNewsByDate(request):
     data = json.loads(request.body)["data"]
 
     date = data["date"]
-    commodity = data["commodity"]
+    commodity = data["commodity"].upper()
 
     d1 = pd.to_datetime(date)
 
@@ -116,7 +116,7 @@ def getNewsByDate(request):
 def get_anomolous_normal(request):
     data = json.loads(request.body)["data"]
 
-    commodity_name = data["commodity_name"]
+    commodity_name = data["commodity_name"].upper()
     date = data["date"]
 
     file_path = data_path + "/NormalOrAnomolous/" + commodity_name + ".csv"
@@ -147,9 +147,9 @@ def get_anomolous_normal(request):
 @csrf_exempt
 def get_forecasted_mandi_1_month(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
-    mandi_name = data["mandi_name"]
-    state_name = data["state_name"]
+    commodity_name = data["commodity_name"].upper()
+    mandi_name = data["mandi_name"].upper()
+    state_name = data["state_name"].upper()
 
     # print(commodity_name, mandi_name, state_name)
 
@@ -168,7 +168,7 @@ def get_forecasted_mandi_1_month(request):
 # delete this  
 @csrf_exempt
 def getAnomalyData(request):
-    commodity_name = "Onion"
+    commodity_name = "ONION"
     mandi_name = "BANGALORE"
     state_name = "KARNATAKA"
     data_type = "Price"
@@ -347,9 +347,9 @@ def get_forecast(request):
 @csrf_exempt
 def get_mandi_data_1_year(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
-    mandi_name = data["mandi_name"]
-    state_name = data["state_name"]
+    commodity_name = data["commodity_name"].upper()
+    mandi_name = data["mandi_name"].upper()
+    state_name = data["state_name"].upper()
 
     from_date =  "2019-8-1"
     to_date = "2020-8-31"
@@ -403,9 +403,9 @@ def get_arrival_vs_mandi_last_3yr(request):
     # print((json.loads(request.body)).keys())
     # print("-----------------")
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
-    mandi_name = data["mandi_name"]
-    state_name = data["state_name"]
+    commodity_name = data["commodity_name"].upper()
+    mandi_name = data["mandi_name"].upper()
+    state_name = data["state_name"].upper()
 
     from_date = "2017-8-1"
     to_date = "2020-8-31"
@@ -445,9 +445,9 @@ def get_arrival_vs_mandi_last_3yr(request):
 @csrf_exempt
 def get_mandi_vs_retail_last_3yr(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
-    mandi_name = data["mandi_name"]
-    state_name = data["state_name"]
+    commodity_name = data["commodity_name"].upper()
+    mandi_name = data["mandi_name"].upper()
+    state_name = data["state_name"].upper()
 
     from_date = "2017-8-1"
     to_date = "2020-8-31"
@@ -491,7 +491,7 @@ def get_mandi_vs_retail_last_3yr(request):
     return JsonResponse({"data": response})
 
 
-def read_volatility_file(aggregate=False, commodity_name="Onion", data_type="Price", mandi_name="Lasalgaon", state_name="Maharashtra", from_date="2017-8-1", to_date="2020-8-31"):
+def read_volatility_file(aggregate=False, commodity_name="ONION", data_type="Price", mandi_name="LASALGAON", state_name="MAHARASHTRA", from_date="2017-8-1", to_date="2020-8-31"):
     if aggregate:
         file_path = f"{data_path}/{commodity_name}/Volatility/Avg_Std_{data_type}.csv"
         df = pd.read_csv(file_path)
@@ -529,9 +529,9 @@ def read_volatility_file(aggregate=False, commodity_name="Onion", data_type="Pri
 @csrf_exempt
 def get_volatility_last_3yr(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
-    mandi_name = data["mandi_name"]
-    state_name = data["state_name"]
+    commodity_name = data["commodity_name"].upper()
+    mandi_name = data["mandi_name"].upper()
+    state_name = data["state_name"].upper()
 
     from_date = "2017-8-1"
     to_date = "2020-8-31"
@@ -574,7 +574,7 @@ def get_volatility_last_3yr(request):
 
 
 
-def read_dispersion_file(aggregate=False, commodity_name="Onion", data_type="Price", from_date="2017-8-1", to_date="2020-8-31"):
+def read_dispersion_file(aggregate=False, commodity_name="ONION", data_type="Price", from_date="2017-8-1", to_date="2020-8-31"):
     if aggregate:
         file_path = f"{data_path}/dispersion{data_type}.csv"
         df = pd.read_csv(file_path)
@@ -606,7 +606,7 @@ def read_dispersion_file(aggregate=False, commodity_name="Onion", data_type="Pri
 @csrf_exempt
 def get_dispersion_last_3yr(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
+    commodity_name = data["commodity_name"].upper()
     # mandi_name = data["mandi_name"]
     # state_name = data["state_name"]
 
@@ -643,7 +643,7 @@ def get_dispersion_last_3yr(request):
 
 
 
-def read_most_volatile_fie(commodity_name="Onion"):
+def read_most_volatile_fie(commodity_name="ONION"):
     file_path = f"{data_path}/{commodity_name}/Volatility/mostVolatile.csv"
     df = pd.read_csv(file_path)
     mandi_name = df["MANDINAME"].to_list()
@@ -652,7 +652,7 @@ def read_most_volatile_fie(commodity_name="Onion"):
 
     return (mandi_name, state_name, vol)
 
-def read_most_volatile_fie2(commodity_name="Onion", date="2020-01-01"):
+def read_most_volatile_fie2(commodity_name="ONION", date="2020-01-01"):
     file_path = f"{data_path}/{commodity_name}/Volatility/mostVolatileAll.csv"
     df = pd.read_csv(file_path)
     mandi_name = df["MANDINAME"].to_list()
@@ -665,7 +665,7 @@ def read_most_volatile_fie2(commodity_name="Onion", date="2020-01-01"):
 @csrf_exempt
 def get_most_volatile_mandi(request):
     data = json.loads(request.body)["data"]
-    commodity_name = data["commodity_name"]
+    commodity_name = data["commodity_name"].upper()
 
     date = data["date"];
 
@@ -866,7 +866,7 @@ def getAnomolousCommodity(request):
 @csrf_exempt
 def getMostAnomolousMandi(request):
     data = json.loads(request.body)["data"]
-    commodity = data["commodity"]
+    commodity = data["commodity"].upper()
     date = data["date"]
 
     d1 = pd.to_datetime(date)
