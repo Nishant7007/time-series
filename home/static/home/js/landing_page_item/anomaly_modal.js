@@ -18,14 +18,16 @@ async function setAnomalyChartModal(info, chart_type){
 	end_date = info["ENDDATE"];
 	mandi_name = info["MANDINAME"];
 	state_name = info["STATENAME"];
-	max_min_ratio = info["MAXMINRATIO"];
-	same_month = info["SameMonth"];
-	last_month = info["lastMonth"];
-	last_year = info["lastYear"];
-	data_type = info["data_type"];
+	max_min_ratio = info?.["MAXMINRATIO"];
+	same_month = info?.["SameMonth"];
+	last_month = info?.["lastMonth"];
+	last_year = info?.["lastYear"];
+	data_type = info?.["data_type"];
 	commodity_name = info["commodity"].toUpperCase();
 
-	mandi_retail_text = data_type=="mandi" ? "Mandi" : "Retail Center"
+	mandi_retail_text = data_type=="mandi" ? "Mandi" : "Retail Center";
+	if(data_type == "arrival") mandi_retail_text = "Mandi"
+
 	$("#id_anomaly_modal_mandi_retail_text").html(mandi_retail_text);
 	$("#id_anomaly_modal_mandi_name").html(mandi_name);
 	$("#id_anomaly_modal_state_name").html(state_name);
@@ -85,16 +87,28 @@ async function setAnomalyChartModal(info, chart_type){
 
 	date = chart_data["date"];
 
-	price_original = chart_data[`${data_type}_price_original`]
-	price_forecast = chart_data[`${data_type}_price_forecast`]
+	data_label = capitalizeFirstLetter(data_type) + " Price"
+
+	if(data_type != "arrival"){
+		price_original = chart_data[`${data_type}_price_original`]
+		price_forecast = chart_data[`${data_type}_price_forecast`]
+	}
+	if(data_type == "arrival"){
+		price_original = chart_data[`arrival_original`]
+		price_forecast = chart_data[`arrival_forecast`]
+		data_label = "Arrival";
+	}
+
+
 	avg = chart_data[`${data_type}_avg`]
 	std =  chart_data[`${data_type}_std`]
 	anomalous_date = chart_data[`${data_type}_anomalous_date`]
 	anomalous_data = chart_data[`${data_type}_anomalous_data`]
 
 	chart_id = 'id_anomaly_modal_chart';
-	data_label = capitalizeFirstLetter(data_type) + " Price"
 
+
+	
 	opts = {
 		chart_id,
 		date,

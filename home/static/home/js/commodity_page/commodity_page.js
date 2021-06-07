@@ -82,8 +82,8 @@ function getForecastOpts(chart_data, chart_id, data_type){
 	if(data_type== "arrival"){
 		price_original = chart_data["arrival_original"]
 		price_forecast = chart_data["arrival_forecast"]
-		anomaly_dates = []
-		anomalous_data = []
+		// anomaly_dates = []
+		// anomalous_data = []
 		data_label = capitalizeFirstLetter(data_type)
 	}
 
@@ -203,6 +203,10 @@ async function plot3YrChartMandiVsArrival(){
 	let chart_id = "id_3yr_mandi_arrival";	
 	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
 	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
+
+	let arrival_anomalous_date = chart_data["arrival_anomalous_date"]
+	let arrival_anomalous_data = chart_data["arrival_anomalous_data"]
+
 	let color = "green"
 	
 	let opts = {
@@ -211,8 +215,10 @@ async function plot3YrChartMandiVsArrival(){
 		mandi_price,
 		mandi_avg,
 		mandi_std,
-		anomalous_date: mandi_anomalous_date,
-		anomalous_data: mandi_anomalous_data,
+		mandi_anomalous_date,
+		mandi_anomalous_data,
+		arrival_anomalous_date,
+		arrival_anomalous_data,
 		arrival,
 		color,
 	}
@@ -246,6 +252,9 @@ async function plot3YrChartMandiVsRetail(){
 	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
 	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
 
+	let retail_anomalous_date = chart_data["retail_anomalous_date"]
+	let retail_anomalous_data = chart_data["retail_anomalous_data"]
+
 	let chart_id = "id_3yr_mandi_retail";
 	let color = "green"	
 
@@ -256,8 +265,10 @@ async function plot3YrChartMandiVsRetail(){
 		mandi_avg,
 		mandi_std,
 		retail_price,
-		anomalous_date: mandi_anomalous_date,
-		anomalous_data: mandi_anomalous_data,
+		mandi_anomalous_date,
+		mandi_anomalous_data,
+		retail_anomalous_date,
+		retail_anomalous_data,
 		retail_avg,
 		retail_std,
 		color,

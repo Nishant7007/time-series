@@ -123,7 +123,7 @@ function drawChartForecast({
 
 	datasets = []
 	if(data_label=="Arrival"){
-		datasets = [s0, s1]
+		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}else{
 		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}
@@ -238,7 +238,7 @@ function drawChart1Yr({
 
 	anomaly= []
 
-	if(data_label != "Arrival"){
+	// if(data_label != "Arrival"){
 		for(var i = 0; i < date.length; i++){
 			if(anomaly_dates.includes(date[i])){
 				anomaly.push(original[i])
@@ -246,7 +246,7 @@ function drawChart1Yr({
 				anomaly.push(null)
 			}
 		}
-	}
+	// }
 
 	mean_plus_std = avg.map(function (num, idx) {
 		return num + std[idx];
@@ -309,7 +309,7 @@ function drawChart1Yr({
 
 	datasets = []
 	if(data_label=="Arrival"){
-		datasets = [s1]
+		datasets = [s1, s2, s3, s4, s5, s6]
 	}else{
 		datasets = [s1, s2, s3, s4, s5, s6]
 	}
@@ -415,8 +415,10 @@ function drawChartArrivalVsMandi({
 	mandi_price,
 	mandi_avg,
 	mandi_std,
-	anomalous_date,
-	anomalous_data,
+	mandi_anomalous_date,
+	mandi_anomalous_data,
+	arrival_anomalous_date,
+	arrival_anomalous_data,
 	arrival,
 	color,
 }){
@@ -424,14 +426,25 @@ function drawChartArrivalVsMandi({
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
 
-	anomaly= []
+	mandi_anomaly = []
 	for(var i = 0; i < date.length; i++){
-		if(anomalous_date.includes(date[i])){
-			anomaly.push(mandi_price[i])
+		if(mandi_anomalous_date.includes(date[i])){
+			mandi_anomaly.push(mandi_price[i])
 		}else{
-			anomaly.push(null)
+			mandi_anomaly.push(null)
 		}
 	}
+
+	arrival_anomaly = []
+	for(var i = 0; i < date.length; i++){
+		if(arrival_anomalous_date.includes(date[i])){
+			// console.log(arrival[i]);
+			arrival_anomaly.push(arrival[i])
+		}else{
+			arrival_anomaly.push(null)
+		}
+	}
+	// console.log(arrival_anomaly);
 
 
 	mean_plus_std = mandi_avg.map(function (num, idx) {
@@ -493,7 +506,7 @@ function drawChartArrivalVsMandi({
 
 	s6 = {
 		label:  "Anomaly",
-		data: anomaly,
+		data: mandi_anomaly,
 		fill: false,
 		pointRadius: 10,
 		type: 'bubble',
@@ -505,16 +518,35 @@ function drawChartArrivalVsMandi({
 	}
 
 	s7 = {
-		data: anomalous_data,
+		data: mandi_anomalous_data,
 		hidden: true,
 	}
+	s8 = {
+		label:  "Anomaly",
+		data: arrival_anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: "red",
+		pointStyle: 'circle',
+		yAxisID: "axis_2",
+
+	}
+
+	s9 = {
+		data: arrival_anomalous_data,
+		hidden: true,
+	}
+	console.log(arrival_anomalous_data);
 
 	
 	let myChart = new Chart( ctx, {
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4, s5, s6, s7],
+			datasets: [s1, s2, s3, s4, s5, s6, s7, s8, s9],
 		},
 		options: {
 			scales: {
@@ -609,6 +641,38 @@ function drawChartArrivalVsMandi({
         console.log(info, data_type)
     };
 
+    document.getElementById(chart_id).onclick = function (evt) {
+		chart_id = $(this)[0].id;
+		data_type = $(this)[0].dataset.type; // mandi/retail/arrival
+
+		myChart = chart_dict[chart_id];
+
+		var activePoints = myChart.getElementsAtEventForMode(evt, 'point', myChart.options); 
+        // filer array, keep which have _datasetIndex=5
+        active_point = activePoints.filter(p=>{
+        	if(p._datasetIndex == 7) return true;
+        	return false;
+        })?.[0];
+
+        if(!active_point) return;
+
+        console.log(active_point)
+
+        var x = myChart.data.labels[active_point._index];
+        var y = myChart.data.datasets[active_point._datasetIndex].data[active_point._index];
+        console.log(x, y);
+
+        //extract information from x (date), active_point._datasetIndex =6
+        info = myChart.data.datasets[8].data[0][x];
+        info = {
+        	...info,
+        	data_type,
+        }
+
+        showAnomalyModal(info)
+        console.log(info, data_type)
+    };
+
 
 }
 
@@ -622,22 +686,34 @@ function drawChartMandiVsRetail({
 	mandi_std,
 	retail_price,
 	retail_avg,
-	anomalous_date,
-	anomalous_data,
+	mandi_anomalous_date,
+	mandi_anomalous_data,
+	retail_anomalous_date,
+	retail_anomalous_data,
 	retail_std,
 	color,
 }){
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
 
-	anomaly= []
+	mandi_anomaly= []
 	for(var i = 0; i < date.length; i++){
-		if(anomalous_date.includes(date[i])){
-			anomaly.push(mandi_price[i])
+		if(mandi_anomalous_date.includes(date[i])){
+			mandi_anomaly.push(mandi_price[i])
 		}else{
-			anomaly.push(null)
+			mandi_anomaly.push(null)
 		}
 	}
+
+	retail_anomaly= []
+	for(var i = 0; i < date.length; i++){
+		if(retail_anomalous_date.includes(date[i])){
+			retail_anomaly.push(retail_price[i])
+		}else{
+			retail_anomaly.push(null)
+		}
+	}
+	// console.log([retail_anomalous_date, retail_anomaly])
 
 	mean_plus_std_mandi = mandi_avg.map(function (num, idx) {
 		return num + mandi_std[idx];
@@ -655,9 +731,9 @@ function drawChartMandiVsRetail({
 		return num - retail_std[idx];
 	});
 
-	var filtered = mandi_price.filter(function (item) {
-		return typeof item == "number"
-	});
+	// var filtered = mandi_price.filter(function (item) {
+	// 	return typeof item == "number"
+	// });
 
 
 	s1 = {
@@ -725,7 +801,7 @@ function drawChartMandiVsRetail({
 
 	s9 = {
 		label:  "Anomaly",
-		data: anomaly,
+		data: mandi_anomaly,
 		fill: false,
 		pointRadius: 10,
 		type: 'bubble',
@@ -737,7 +813,25 @@ function drawChartMandiVsRetail({
 	}
 
 	s10 = {
-		data: anomalous_data,
+		data: mandi_anomalous_data,
+		hidden: true,
+	}
+
+	s11 = {
+		label:  "Anomaly",
+		data: retail_anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: "red",
+		pointStyle: 'circle',
+
+	}
+
+	s12 = {
+		data: retail_anomalous_data,
 		hidden: true,
 	}
 
@@ -747,7 +841,7 @@ function drawChartMandiVsRetail({
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10],
+			datasets: [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12],
 		},
 		options: {
 			scales: {
@@ -822,6 +916,38 @@ function drawChartMandiVsRetail({
 
         //extract information from x (date), active_point._datasetIndex =6
         info = myChart.data.datasets[9].data[0][x];
+        info = {
+        	...info,
+        	data_type,
+        }
+
+        showAnomalyModal(info)
+        console.log(info, data_type)
+    };
+
+    document.getElementById(chart_id).onclick = function (evt) {
+		chart_id = $(this)[0].id;
+		data_type = $(this)[0].dataset.type; // mandi/retail/arrival
+
+		myChart = chart_dict[chart_id];
+
+		var activePoints = myChart.getElementsAtEventForMode(evt, 'point', myChart.options); 
+        // filer array, keep which have _datasetIndex=5
+        active_point = activePoints.filter(p=>{
+        	if(p._datasetIndex == 10) return true;
+        	return false;
+        })?.[0];
+
+        if(!active_point) return;
+
+        console.log(active_point)
+
+        var x = myChart.data.labels[active_point._index];
+        var y = myChart.data.datasets[active_point._datasetIndex].data[active_point._index];
+        console.log(x, y);
+
+        //extract information from x (date), active_point._datasetIndex =6
+        info = myChart.data.datasets[11].data[0][x];
         info = {
         	...info,
         	data_type,

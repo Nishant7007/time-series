@@ -105,7 +105,10 @@ function plotChart(data, chart_id, color){
 		arrival_avg = data["arrival_avg"]
 		arrival_std =  data["arrival_std"]
 
-		plotChart1(chart_id[2], date, arrival, arrival_avg,arrival_std, [], [], "Arrival", max_y_arrival_1yr[SELECTED_COMMODITY], color);
+		arrival_anomalous_date = data["arrival_anomalous_date"]
+		arrival_anomalous_data = data["arrival_anomalous_data"]
+
+		plotChart1(chart_id[2], date, arrival, arrival_avg,arrival_std, arrival_anomalous_date, arrival_anomalous_data, "Arrival", max_y_arrival_1yr[SELECTED_COMMODITY], color);
 
 	})
 }
@@ -196,7 +199,7 @@ function plotChart1(chart_id, date, value, avg, std, anomaly_dates, anomaly_data
 
 	datasets = []
 	if(data_label=="Arrival"){
-		datasets = [s1]
+		datasets = [s1, s2, s3, s4, s5, s6]
 	}else{
 		datasets = [s1, s2, s3, s4, s5, s6]
 	}
@@ -373,9 +376,11 @@ function plotChartForecast(data, chart_id, color){
 		arrival_original = data["arrival_original"]
 		arrival_forecast = data["arrival_forecast"]
 		arrival_avg = data["arrival_avg"]
-		arrival_std =  data["arrival_std"]
+		arrival_std =  data["arrival_std"],
+		arrival_anomalous_date = data["arrival_anomalous_date"]
+		arrival_anomalous_data = data["arrival_anomalous_data"]
 
-		plotChartForecast1(chart_id[2], date, arrival_original, arrival_forecast,  arrival_avg,arrival_std, [], [], "Arrival", max_y_forecast[SELECTED_COMMODITY], color);
+		plotChartForecast1(chart_id[2], date, arrival_original, arrival_forecast,  arrival_avg,arrival_std, arrival_anomalous_date, arrival_anomalous_data, "Arrival", max_y_forecast[SELECTED_COMMODITY], color);
 
 	})
 }
@@ -510,7 +515,7 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 
 	datasets = []
 	if(data_label=="Arrival"){
-		datasets = [s0, s1]
+		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}else{
 		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}
