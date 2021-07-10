@@ -12,7 +12,9 @@ urlpatterns = [
 	path('get_mandi_vs_retail_last_3yr', views.get_mandi_vs_retail_last_3yr, name="get_mandi_vs_retail_last_3yr"),
 	path('get_volatility_last_3yr', views.get_volatility_last_3yr, name="get_volatility_last_3yr"),
 	path('get_dispersion_last_3yr', views.get_dispersion_last_3yr, name="get_dispersion_last_3yr"),
-	path('get_most_volatile_mandi', views.get_most_volatile_mandi, name="get_most_volatile_mandi"),
+	path('get_dispersion_last_3yr_anomaly', views.get_dispersion_last_3yr_anomaly, name="get_dispersion_last_3yr_anomaly"),
+	# path('get_most_volatile_mandi', views.get_most_volatile_mandi, name="get_most_volatile_mandi"),
+	path('get_most_dispersed_commodity', views.get_most_dispersed_commodity, name="get_most_dispersed_commodity"),
 
 
 	path('get_commodity_page/<str:commodity>/<str:mandi>/<str:state>/<str:date>', views.get_commodity_page, name="get_commodity_page"),

@@ -33,6 +33,7 @@ function plotAllCharts(){
 	plotVolatilityChart();
 	plotMostVolatileChart();
 	plotDispersionChart();
+	plotMostDispersedChart();
 	//add more
 }
 
@@ -371,14 +372,6 @@ async function plotMostVolatileChart(){
 
 
 
-
-
-
-
-
-
-
-
 async function plotDispersionChart(){
 	let data = {
 		"date": selected_option.date,
@@ -429,6 +422,71 @@ async function plotDispersionChart(){
 
 	drawChartDispersion(opts)
 
+
+	plotDispersionAnomalyChart();
+
 }
 
+
+async function plotDispersionAnomalyChart(){
+	let data = {
+		"date": selected_option.date,
+		"commodity_name": selected_option.commodity,
+	}
+
+	let chart_data = await requestPostData("/agri_req/get_dispersion_last_3yr_anomaly", {"data": data})
+
+
+	// plot mandi anomaly
+	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
+	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
+
+	// mandi
+	let opts = {
+		chart_id: "id_dispersion_mandi",
+		anomalous_date: mandi_anomalous_date,
+		anomalous_data: mandi_anomalous_data,
+		color: "green",
+	}
+
+	drawChartDispersionAnomaly(opts)
+
+
+	// plot retail anomaly
+	let retail_anomalous_date = chart_data["retail_anomalous_date"]
+	let retail_anomalous_data = chart_data["retail_anomalous_data"]
+
+	// retail
+	opts = {
+		chart_id: "id_dispersion_retail",
+		anomalous_date: retail_anomalous_date,
+		anomalous_data: retail_anomalous_data,
+		color: "blue",
+	}
+
+	drawChartDispersionAnomaly(opts)
+}
+
+
+async function plotMostDispersedChart(){
+	let data = {
+		"date": selected_option.date,
+	}
+
+	let chart_data = await requestPostData("/agri_req/get_most_dispersed_commodity", {"data": data})
+
+
+	let commodities = chart_data["commodity"];
+	let dispersion = chart_data["dispersion"];
+
+
+	let opts = {
+		chart_id: "id_most_dispersed_commodity",
+		commodities,
+		dispersion
+	}
+
+	drawChartMostDispersed(opts)
+
+}
 

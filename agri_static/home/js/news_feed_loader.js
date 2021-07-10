@@ -13,19 +13,31 @@ commodity_img = {
 
 
 
+page_1st = true;
 
 function getNewsFeed(){
 	console.log("getNewsFeed")
+	$("#id_news_list").empty();
 	date = $("#id_news_feed_date").val();
 	commodity = $("#id_news_feed_commoodity").val();
-	showNewsFeedByDate(date, commodity);
+	// showNewsFeedByDate(date, commodity);
+	showNonAnomalousAndArticleNewsFeedByDate(date, commodity)
 	showAnomalousAndArticleNewsFeedByDate(date, commodity);
 	showAnomalousAndNoArticleNewsFeedByDate(date, commodity);
 	showVolatilityNewsFeedByDate(date, commodity);
 
+	showMostAnomolousMandi(date, commodity)
+
 
 	SELECTED_COMMODITY = capitalizeFirstLetter(commodity);
-	reSequence();
+
+	if(SELECTED_COMMODITY == "All") showMostAnomolousCommodity(date);
+
+	if(SELECTED_COMMODITY == "All") SELECTED_COMMODITY = "Onion";
+	if(!page_1st){
+		reSequence();
+	}
+	page_1st = false;
 }
 
 
@@ -110,7 +122,7 @@ function requestVolatilityModal(commodity, date){
 		vol = data["vol"];
 
 		// plot
-		plotMostVolatileModal("most_volatile_chart", mandi_name, state_name, vol);
+		plotMostVolatileModal("most_volatile_chart_news_feed_modal", mandi_name, state_name, vol);
 
 		$("#volatileModal").modal('open');
 
@@ -153,13 +165,20 @@ function plotMostVolatileModal(chart_id, mandi_name, state_name, vol){
 		type: 'horizontalBar',
 		data: s1,
 		options: {
+			scales: {
+				xAxes: [{
+					ticks:{
+						min: 0.05,
+					}
+				}],
+			},
 			title: {
-                display: true,
-                text: '10 Most Volatile Mandis'
-            },
-            legend: {
-                display: false,
-            },
+				display: true,
+				text: '10 Most Volatile Mandis'
+			},
+			legend: {
+				display: false,
+			},
 		}
 	});
 
@@ -208,6 +227,7 @@ function setAnomalousAndArticleNewsFeedByDate(news_data){
 		mandi_name = data["MANDINAME"];
 		start_date = data["STARTDATE"];
 
+		page_url = `/agri_req/get_commodity_page/${commodity_name}/${mandi_name}/${state_name}/${published_date}`
 
 
 		html += `
@@ -224,7 +244,7 @@ function setAnomalousAndArticleNewsFeedByDate(news_data){
 					</div>
 
 					<div class="col s2">
-						<a href="/agri_req/landing_page/${commodity_name}" class="secondary-content" target="_blank">
+						<a href="${page_url}" class="secondary-content" target="_blank">
 							<i class="material-icons">launch</i>
 						</a>
 					</div>
@@ -288,7 +308,10 @@ function setAnomalousAndNoArticleNewsByDate(news_data){
 		state_name = data["STATENAME"];
 		mandi_name = data["MANDINAME"];
 		start_date = data["STARTDATE"];
+		end_date = data["ENDDATE"];
+		
 
+		page_url = `/agri_req/get_commodity_page/${commodity_name}/${mandi_name}/${state_name}/${end_date}`
 
 
 		html += `
@@ -304,7 +327,7 @@ function setAnomalousAndNoArticleNewsByDate(news_data){
 					</div>
 
 					<div class="col s2">
-						<a href="/agri_req/landing_page/${commodity_name}" class="secondary-content" target="_blank">
+						<a href="${page_url}" class="secondary-content" target="_blank">
 							<i class="material-icons">launch</i>
 						</a>
 					</div>
@@ -322,6 +345,195 @@ function setAnomalousAndNoArticleNewsByDate(news_data){
 
 
 
+///////////////////Non Anomalous +  Article //////////////
+
+async function showNonAnomalousAndArticleNewsFeedByDate(date, commodity){
+	data = {
+		date,
+		commodity,
+	}
+
+	let news_data = await requestPostData("/agri_req/getNonAnomalousAndArticleNewsFeedByDate", {"data": data});
+	news_data = news_data["news"];
+
+	setNonAnomalousAndArticleNewsByDate(news_data);
+
+}
+
+function setNonAnomalousAndArticleNewsByDate(news_data){
+	var html = ``;
+	console.log(news_data);
+	for(var i = 0; i < news_data.length; i++){
+		data = news_data[i]
+
+		commodity_name = data["COMMODITY"];
+		published_date = data["PUBLISHEDDATE"]
+		article_url = data["ARTICLEURL"]
+		article_title = data["ARTICLETITLE"]
+
+
+		html += `
+			<li class="collection-item">
+				<div class="row" style="margin-bottom: 0px">
+					<div class="col s2">
+						<span style="float: left;"> <img class="responsive-img" style="height: 40px" src="/agri_static/home/img/${commodity_img[commodity_name]}" alt=""></span>
+					</div>
+					<div class="col s8">
+						<span>${published_date}</span>
+						<br>
+						<span class="news_title">${article_title}</span>
+					</div>
+
+					<div class="col s2">
+						<a href="${article_url}" class="secondary-content" target="_blank">
+							<i class="material-icons">launch</i>
+						</a>
+					</div>
+				</div>
+			</li>
+
+		`
+	}
+
+	$("#id_news_list").append(html);
+
+}
+
+
+///////////////////END Non Anomalous +  Article //////////////
+
+
+
+
+
+
+///////////////////// Show most anomoulus mandi\\\\\\\\\\\\\\
+
+async function showMostAnomolousMandi(date, commodity){
+	if(commodity == "ALL") return;
+	data = {
+		date,
+		commodity,
+	}
+
+	let response = await requestPostData("/agri_req/getMostAnomolousMandi", {"data": data});
+	anomaly_data = response["anomaly_data"]
+
+	setMostAnomolousMandi(anomaly_data);
+
+}
+
+
+function setMostAnomolousMandi(anomaly_data){
+
+	var html = ``;
+	for(var i = 0; i < anomaly_data.length; i++){
+		data = anomaly_data[i]
+
+		commodity_name = data["COMMODITY"];
+		mandi_name = data["MANDINAME"];
+		state_name = data["STATENAME"];
+		date = data["DATE"];
+
+		page_url = `/agri_req/get_commodity_page/${commodity_name}/${mandi_name}/${state_name}/${date}`
+
+
+
+		html += `
+			<li class="collection-item">
+				<div class="row" style="margin-bottom: 0px">
+					<div class="col s2">
+						<span style="float: left;"> <img class="responsive-img" style="height: 40px" src="/agri_static/home/img/${commodity_img[commodity_name]}" alt=""></span>
+					</div>
+					<div class="col s8">
+						<span class="news_title"> <span class="news_mandi_name">${mandi_name}</span> (${state_name})  is the most <span class="news_kw">Anomalous</span> mandis for ${commodity_name} </span>
+					</div>
+					<div class="col s2">
+						<a href="${page_url}" class="secondary-content" target="_blank">
+							<i class="material-icons">launch</i>
+						</a>
+					</div>
+
+					
+				</div>
+			</li>
+
+		`
+	}
+
+	$("#id_news_list").append(html);
+
+}
+
+
+
+
+///////////////////// END most anomoulus mandi\\\\\\\\\\\\\\
+
+
+
+///////////////////// Show most anomoulus commodity\\\\\\\\\\\\\\
+
+async function showMostAnomolousCommodity(date){
+	data = {
+		date,
+	}
+
+	let response = await requestPostData("/agri_req/getAnomolousCommodity", {"data": data});
+	anomaly_data = response["anomaly_data"]
+
+	setMostAnomolousCommodity(anomaly_data);
+
+}
+
+
+function setMostAnomolousCommodity(anomaly_data){
+
+	var html = ``;
+	for(var i = 0; i < anomaly_data.length; i++){
+		data = anomaly_data[i]
+
+		commodity_name = data["COMMODITY"].toUpperCase();
+		date = data["DATE"];
+
+		let mandi_state = COMMODITY_MAP["default_select"]?.[commodity_name]?.[0]
+		mandi_name = mandi_state?.["mandi"]
+		state_name = mandi_state?.["state"]
+
+		page_url = `/agri_req/get_commodity_page/${commodity_name}/${mandi_name}/${state_name}/${date}`
+
+
+
+		html += `
+			<li class="collection-item">
+				<div class="row" style="margin-bottom: 0px">
+					<div class="col s2">
+						<span style="float: left;"> <img class="responsive-img" style="height: 40px" src="/agri_static/home/img/${commodity_img[commodity_name]}" alt=""></span>
+					</div>
+					<div class="col s8">
+						<span class="news_title"> <span class="news_mandi_name">${commodity_name}</span> is the most <span class="news_kw">Anomalous</span> Commodity</span>
+					</div>
+					<div class="col s2">
+						<a href="${page_url}" class="secondary-content" target="_blank">
+							<i class="material-icons">launch</i>
+						</a>
+					</div>
+
+					
+				</div>
+			</li>
+
+		`
+	}
+
+	$("#id_news_list").append(html);
+
+}
+
+
+
+
+///////////////////// END most anomoulus commodity\\\\\\\\\\\\\\
 
 
 
@@ -353,7 +565,7 @@ function showNewsFeedByDate(date, commodity){
 
 function setNewsFeedByDate(news_list){
 	var html = ``;
-	$("#id_news_list").empty();
+	// $("#id_news_list").empty();
 
 	// if(news_list.length == 0){
 	// 	$("#id_news_list").append(`<span>No news found</span>`)
@@ -367,6 +579,8 @@ function setNewsFeedByDate(news_list){
 		published_date = data["PUBLISHEDDATE"];
 		article_url = data["ARTICLEURL"];
 		article_title = data["ARTICLETITLE"];
+
+
 
 		html += `
 			<li class="collection-item">

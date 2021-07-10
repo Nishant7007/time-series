@@ -230,40 +230,6 @@ def getAnomalousAndNoArticleNewsFeedByDate(request):
 
 
 
-@csrf_exempt
-def getMostVolatileMandiByDate(request):
-	data = json.loads(request.body)["data"]
-	date = data["date"]
-	commodity = data["commodity"].upper()
-
-	d1 = pd.to_datetime(date)
-	# 1st day of same month
-	d1 = d1 - pd.Timedelta('1 day') * (d1.day - 1)
-
-	file_path = f"{data_path}/{commodity}/Volatility/mostVolatileAll.csv"
-
-	df = pd.read_csv(file_path)
-	df = df.fillna("")
-
-
-	df['DATE'] = pd.to_datetime(df['DATE'], format="%Y-%m-%d")
-	df = df[(df['DATE'] == d1)]
-
-
-	mandi_name = df["MANDINAME"].to_list()
-	state_name = df["STATENAME"].to_list()
-	vol = df["VOLATILITY"].to_list()
-
-	response = {
-		"mandi_name": mandi_name,
-		"state_name": state_name,
-		"vol": vol
-	}
-
-	return JsonResponse({"data": response})
-
-
-
 
 
 

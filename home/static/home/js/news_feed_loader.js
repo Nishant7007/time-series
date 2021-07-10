@@ -165,13 +165,20 @@ function plotMostVolatileModal(chart_id, mandi_name, state_name, vol){
 		type: 'horizontalBar',
 		data: s1,
 		options: {
+			scales: {
+				xAxes: [{
+					ticks:{
+						min: 0.05,
+					}
+				}],
+			},
 			title: {
-                display: true,
-                text: '10 Most Volatile Mandis'
-            },
-            legend: {
-                display: false,
-            },
+				display: true,
+				text: '10 Most Volatile Mandis'
+			},
+			legend: {
+				display: false,
+			},
 		}
 	});
 

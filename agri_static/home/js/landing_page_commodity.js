@@ -1,6 +1,22 @@
+selected_opts = {}
+
+jQuery(document).ready(function($) {
+	setSelectedOpts();
+	getAnomalousNormalMandi(commodity);
+});
+
+function setSelectedOpts(){
+	selected_opts["commodity"] = $("#id_commodity_name").val();
+	selected_opts["date"] = $("#id_date").val();
+}
+
+
+
+
 function getAnomalousNormalMandi(commodity_name){
 	data = {
-		commodity_name
+		commodity_name: selected_opts["commodity"],
+		date: selected_opts["date"],
 	}
 
 	requestPostData("/agri_req/get_anomolous_normal", {"data": data})
@@ -34,9 +50,12 @@ function plotMandis(commodity_name, mandi_list, anomlous_flag){
 
 
 		html = `
-			<div class="cell">
-				<div class="card">
+			<div class="col s12 l4 m6">
+				<div class="card center-align" style="border-radius: 20px; padding: 10px;">
 					<span class="card-title">${mandi_name}</span>
+					<br>
+					<span class="">${state_name}</span>
+
 					<div class="card-content">
 
 						<canvas id="${chart_id}" width="" height="">
@@ -75,7 +94,8 @@ function requestMandiChart(chart_id, state_name, mandi_name, commodity_name){
 	data = {
 		commodity_name,
 		mandi_name,
-		state_name
+		state_name,
+		// date
 	}
 
 	requestPostData("/agri_req/get_forecasted_mandi_1_month", {"data": data})
@@ -95,7 +115,7 @@ function requestMandiChart(chart_id, state_name, mandi_name, commodity_name){
 
 
 function plotMandiChart(chart_id, date, mandi_price){
-		var ctx = document.getElementById(chart_id).getContext('2d');
+	var ctx = document.getElementById(chart_id).getContext('2d');
 	s1 = {
 		borderColor: "red",
 		data: mandi_price,
@@ -122,9 +142,6 @@ function plotMandiChart(chart_id, date, mandi_price){
 	                    }
 	                },
 	                ticks: {
-
-	                	// max: 5,
-	                	// step: 60,
 	                	autoSkip: true,
         				maxTicksLimit: 3,
         				maxRotation: 0,
@@ -133,8 +150,7 @@ function plotMandiChart(chart_id, date, mandi_price){
 	            }],
 	            yAxes: [{
 	            	ticks: {
-	            		// max: 8000,
-	            		min: 0,
+	            		// min: 0,
 	            	}
 	            }
 	            ]
@@ -152,7 +168,7 @@ function plotMandiChart(chart_id, date, mandi_price){
 }
 
 
-getAnomalousNormalMandi(commodity)
+
 // plotMandis(commodity, true);
 // plotMandis(commodity, false);
 

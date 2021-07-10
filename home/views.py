@@ -640,7 +640,7 @@ def get_dispersion_last_3yr(request):
 
     if 'date' in data:
         to_date = date_str_add(data['date'], months=1)
-        from_date = date_str_add(data['date'], months=-40) 
+        from_date = max(data_start_date, date_str_add(data['date'], months=-40) )
 
 
 
@@ -663,6 +663,36 @@ def get_dispersion_last_3yr(request):
         "retail_std": retail_std,
 
     }
+    return JsonResponse({"data": response})
+
+
+@csrf_exempt
+def get_dispersion_last_3yr_anomaly(request):
+    data = json.loads(request.body)["data"]
+
+    # commodity_name, date
+
+    commodity_name = data["commodity_name"].upper()
+
+    if 'date' in data:
+        to_date = date_str_add(data['date'], months=1)
+        from_date = max(data_start_date, date_str_add(data['date'], months=-40) )
+
+
+    mandi_anomalous_date, mandi_anomalous_data = getDispersionAnomalyShowDate(commodity_name, from_date, to_date, "Price")
+    retail_anomalous_date, retail_anomalous_data = getDispersionAnomalyShowDate(commodity_name, from_date, to_date, "Retail")
+
+    response = {
+        "commodity_name": commodity_name,
+        "mandi_anomalous_date": mandi_anomalous_date,
+        "mandi_anomalous_data": mandi_anomalous_data,
+
+        "retail_anomalous_date": retail_anomalous_date,
+        "retail_anomalous_data": retail_anomalous_data,
+
+
+    }
+
     return JsonResponse({"data": response})
 
 
@@ -706,6 +736,83 @@ def get_most_volatile_mandi(request):
     return JsonResponse({"data": response})
 
 
+@csrf_exempt
+def getMostVolatileMandiByDate(request):
+    data = json.loads(request.body)["data"]
+    date = data["date"]
+    commodity = data["commodity"].upper()
+
+    d1 = pd.to_datetime(date)
+    # 1st day of same month
+    d1 = d1 - pd.Timedelta('1 day') * (d1.day - 1)
+
+    file_path = f"{data_path}/{commodity}/Volatility/mostVolatile.csv"
+
+    df = pd.read_csv(file_path)
+    df = df.fillna("")
+
+
+    df['DATE'] = pd.to_datetime(df['DATE'], format="%Y-%m-%d")
+    df = df[(df['DATE'] == d1)]
+
+
+    mandi_name = df["MANDINAME"].to_list()
+    state_name = df["STATENAME"].to_list()
+    vol = df["VOLATILITY"].to_list()
+
+    response = {
+        "mandi_name": mandi_name,
+        "state_name": state_name,
+        "vol": vol
+    }
+
+    return JsonResponse({"data": response})
+
+
+
+
+
+
+def read_most_dispersed_file(date):
+    file_path = f"{data_path}/mostDispersedCommoditiesPrice.csv"
+    df = pd.read_csv(file_path)
+
+    d1 = pd.to_datetime(date)
+
+    # 1st day of same month
+    d1 = d1 - pd.Timedelta('1 day') * (d1.day - 1) 
+    df['DATE'] = pd.to_datetime(df['DATE'], format="%Y-%m-%d")
+    df = df[(df['DATE'] == d1)]
+    df['DATE'] = df['DATE'].dt.strftime('%Y-%m-%d')
+    
+    # date = date[:-2] + "01"
+
+    # df = df[df["DATE"]==date]
+
+    commodity = df["COMMODITY"].to_list()
+    dispersion = df["DISPERSION"].to_list()
+
+    return (commodity, dispersion)
+
+    
+
+
+@csrf_exempt
+def get_most_dispersed_commodity(request):
+    data = json.loads(request.body)["data"]
+    
+    date = data["date"]
+
+    commodity, dispersion = read_most_dispersed_file(date)
+
+    response = {
+        "commodity": commodity,
+        "dispersion": dispersion,
+        "date": date
+
+    }
+
+    return JsonResponse({"data": response})
 
 
 @csrf_exempt
@@ -877,17 +984,6 @@ def getAnomolousCommodity(request):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 @csrf_exempt
 def getMostAnomolousMandi(request):
     data = json.loads(request.body)["data"]
@@ -934,6 +1030,26 @@ def getMostAnomolousMandi(request):
 
 
     
+def getDispersionAnomalyShowDate(commodity_name, from_date, to_date, data_type, filter=True):
+    file_path = data_path + "/" + commodity_name + "/" + "Dispersion/ShowAnomalies_dispersion_" + data_type + ".csv"
+    from_date = pd.to_datetime(from_date, format="%Y-%m-%d") 
+    to_date = pd.to_datetime(to_date, format="%Y-%m-%d")
+    df = pd.read_csv(file_path)
+
+    df['DATE'] = pd.to_datetime(df['DATE'], format='%Y-%m-%d')
+    df = df[(df["DATE"] >= from_date) & (df["DATE"] <= to_date)]
+    df["DATE"] = df["DATE"].astype(str)
+
+    if filter:
+        df["Year"] = pd.to_datetime(df['DATE']).dt.year
+        df = df.groupby('Year').head(2)
+
+    df = df.head(6)
+    df = df.replace(np.nan, 'None')
+    df = df.set_index('DATE', drop=False)
+    anomaly_date = df["DATE"].to_list()
+    anomaly_data = df.to_dict(orient='index')
+    return anomaly_date, [anomaly_data]
 
 
 

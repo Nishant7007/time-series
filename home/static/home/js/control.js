@@ -429,6 +429,7 @@ function InitializeSequence(){
 
 		plotDispersion();
     	plotMostVolatile();
+    	plotMostDispersedChart();
 		
 
 	});	

@@ -33,6 +33,7 @@ function plotAllCharts(){
 	plotVolatilityChart();
 	plotMostVolatileChart();
 	plotDispersionChart();
+	plotMostDispersedChart();
 	//add more
 }
 
@@ -82,8 +83,8 @@ function getForecastOpts(chart_data, chart_id, data_type){
 	if(data_type== "arrival"){
 		price_original = chart_data["arrival_original"]
 		price_forecast = chart_data["arrival_forecast"]
-		anomaly_dates = []
-		anomalous_data = []
+		// anomaly_dates = []
+		// anomalous_data = []
 		data_label = capitalizeFirstLetter(data_type)
 	}
 
@@ -177,7 +178,14 @@ function get1YrOpts(chart_data, chart_id, data_type){
 }
 
 
-async function plot3YrChart(){
+function plot3YrChart(){
+	
+	plot3YrChartMandiVsArrival();
+	plot3YrChartMandiVsRetail();
+
+}
+
+async function plot3YrChartMandiVsArrival(){
 	let data = {
 		"date": selected_option.date,
 		"commodity_name": selected_option.commodity,
@@ -194,6 +202,12 @@ async function plot3YrChart(){
 	let date = chart_data["date"];
 	let arrival = chart_data["arrival"];
 	let chart_id = "id_3yr_mandi_arrival";	
+	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
+	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
+
+	let arrival_anomalous_date = chart_data["arrival_anomalous_date"]
+	let arrival_anomalous_data = chart_data["arrival_anomalous_data"]
+
 	let color = "green"
 	
 	let opts = {
@@ -202,36 +216,60 @@ async function plot3YrChart(){
 		mandi_price,
 		mandi_avg,
 		mandi_std,
+		mandi_anomalous_date,
+		mandi_anomalous_data,
+		arrival_anomalous_date,
+		arrival_anomalous_data,
 		arrival,
 		color,
 	}
 
+
 	drawChartArrivalVsMandi(opts)
 
 
+}
 
+async function plot3YrChartMandiVsRetail(){
+	let data = {
+		"date": selected_option.date,
+		"commodity_name": selected_option.commodity,
+		"mandi_name": selected_option.mandi,
+		"state_name": selected_option.state,
+	}
 
+	let chart_data = await requestPostData("/agri_req/get_mandi_vs_retail_last_3yr", {"data": data})
 	
-	chart_data = await requestPostData("/agri_req/get_mandi_vs_retail_last_3yr", {"data": data})
+	let date = chart_data["date"];
 	
-	mandi_price = chart_data["mandi_price"]
-	mandi_avg = chart_data["mandi_avg"]
-	mandi_std =  chart_data["mandi_std"]
+	let mandi_price = chart_data["mandi_price"]
+	let mandi_avg = chart_data["mandi_avg"]
+	let mandi_std =  chart_data["mandi_std"]
 
-	retail_price = chart_data["retail_price"]
-	retail_avg = chart_data["retail_avg"]
-	retail_std =  chart_data["retail_std"]
+	let retail_price = chart_data["retail_price"]
+	let retail_avg = chart_data["retail_avg"]
+	let retail_std =  chart_data["retail_std"]
 
-	chart_id = "id_3yr_mandi_retail";
-	color = "green"	
+	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
+	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
 
-	opts = {
+	let retail_anomalous_date = chart_data["retail_anomalous_date"]
+	let retail_anomalous_data = chart_data["retail_anomalous_data"]
+
+	let chart_id = "id_3yr_mandi_retail";
+	let color = "green"	
+
+	let opts = {
 		chart_id,
 		date,
 		mandi_price,
 		mandi_avg,
 		mandi_std,
 		retail_price,
+		mandi_anomalous_date,
+		mandi_anomalous_data,
+		retail_anomalous_date,
+		retail_anomalous_data,
 		retail_avg,
 		retail_std,
 		color,
@@ -239,9 +277,9 @@ async function plot3YrChart(){
 
 	drawChartMandiVsRetail(opts)
 
-	
-
 }
+
+
 
 async function plotVolatilityChart(){
 	let data = {
@@ -261,6 +299,12 @@ async function plotVolatilityChart(){
 	let retail_avg = chart_data["retail_avg"]
 	let retail_std =  chart_data["retail_std"]
 
+	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
+	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
+
+	let retail_anomalous_date = chart_data["retail_anomalous_date"]
+	let retail_anomalous_data = chart_data["retail_anomalous_data"]
+
 	let date = chart_data["date"];
 
 
@@ -273,6 +317,8 @@ async function plotVolatilityChart(){
 		std: mandi_std,
 		data_label: "Mandi Volatility",
 		color: "green",
+		anomalous_date: mandi_anomalous_date,
+		anomalous_data: mandi_anomalous_data,
 	}
 
 	drawChartVolatility(opts)
@@ -287,6 +333,8 @@ async function plotVolatilityChart(){
 		std: retail_std,
 		data_label: "Retail Volatility",
 		color: "blue",
+		anomalous_date: retail_anomalous_date,
+		anomalous_data: retail_anomalous_data,
 	}
 
 	drawChartVolatility(opts)
@@ -298,11 +346,13 @@ async function plotMostVolatileChart(){
 	let data = {
 		"date": selected_option.date,
 		"commodity_name": selected_option.commodity,
+		"commodity" : selected_option.commodity,
 		"mandi_name": selected_option.mandi,
 		"state_name": selected_option.state,
 	}
 
-	let chart_data = await requestPostData("/agri_req/get_most_volatile_mandi", {"data": data})
+	let chart_data = await requestPostData("/agri_req/getMostVolatileMandiByDate", {"data": data})
+
 
 	let mandi_name = chart_data["mandi_name"];
 	let state_name = chart_data["state_name"];
@@ -318,14 +368,6 @@ async function plotMostVolatileChart(){
 	drawChartMostVolatile(opts)
 
 }
-
-
-
-
-
-
-
-
 
 
 
@@ -380,6 +422,71 @@ async function plotDispersionChart(){
 
 	drawChartDispersion(opts)
 
+
+	plotDispersionAnomalyChart();
+
 }
 
+
+async function plotDispersionAnomalyChart(){
+	let data = {
+		"date": selected_option.date,
+		"commodity_name": selected_option.commodity,
+	}
+
+	let chart_data = await requestPostData("/agri_req/get_dispersion_last_3yr_anomaly", {"data": data})
+
+
+	// plot mandi anomaly
+	let mandi_anomalous_date = chart_data["mandi_anomalous_date"]
+	let mandi_anomalous_data = chart_data["mandi_anomalous_data"]
+
+	// mandi
+	let opts = {
+		chart_id: "id_dispersion_mandi",
+		anomalous_date: mandi_anomalous_date,
+		anomalous_data: mandi_anomalous_data,
+		color: "green",
+	}
+
+	drawChartDispersionAnomaly(opts)
+
+
+	// plot retail anomaly
+	let retail_anomalous_date = chart_data["retail_anomalous_date"]
+	let retail_anomalous_data = chart_data["retail_anomalous_data"]
+
+	// retail
+	opts = {
+		chart_id: "id_dispersion_retail",
+		anomalous_date: retail_anomalous_date,
+		anomalous_data: retail_anomalous_data,
+		color: "blue",
+	}
+
+	drawChartDispersionAnomaly(opts)
+}
+
+
+async function plotMostDispersedChart(){
+	let data = {
+		"date": selected_option.date,
+	}
+
+	let chart_data = await requestPostData("/agri_req/get_most_dispersed_commodity", {"data": data})
+
+
+	let commodities = chart_data["commodity"];
+	let dispersion = chart_data["dispersion"];
+
+
+	let opts = {
+		chart_id: "id_most_dispersed_commodity",
+		commodities,
+		dispersion
+	}
+
+	drawChartMostDispersed(opts)
+
+}
 

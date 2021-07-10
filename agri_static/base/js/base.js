@@ -25,7 +25,7 @@ function requestPostData(url, data) {
 		$.ajax({
 			url: url,
 			type: 'POST',
-			async: false,
+			// async: false,
 
 			contentType: 'application/json',
 			data: JSON.stringify(data),

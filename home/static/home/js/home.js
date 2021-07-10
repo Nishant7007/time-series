@@ -1446,6 +1446,8 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 		}
 	}
 
+
+
 	console.log({label, bgColor, vol})
 
 
@@ -1458,13 +1460,95 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 		}]
 		
 	}
+
+	console.log(s1);
+	var myHorizontalBar = new Chart(ctx, {
+		type: 'horizontalBar',
+		data: s1,
+		options: {
+			scales: {
+				xAxes: [{
+					ticks:{
+						min: 0.05,
+					}
+				}],
+			},
+			title: {
+				display: true,
+				text: '10 Most Volatile Mandis'
+			},
+			legend: {
+				display: false,
+			},
+		}
+	});
+	chart_dict[chart_id] = myHorizontalBar
+
+
+}
+
+
+async function plotMostDispersedChart(){
+	date = $("#id_news_feed_date").val();
+	let data = {
+		date
+	}
+
+	let chart_data = await requestPostData("/agri_req/get_most_dispersed_commodity", {"data": data})
+
+
+	let commodities = chart_data["commodity"];
+	let dispersion = chart_data["dispersion"];
+
+
+	let opts = {
+		chart_id: "id_most_dispersed_commodity",
+		commodities,
+		dispersion
+	}
+
+	drawChartMostDispersed(opts)
+
+}
+function drawChartMostDispersed({
+	chart_id,
+	commodities,
+	dispersion
+}){
+	redraw(chart_id);
+	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	var label = []
+	var bgColor = []
+
+
+	for(var i = 0; i < Math.min(11, commodities.length); i++){
+		if(commodities[i] == "AVG"){
+			bgColor.push("orange")
+			label.push("AVERAGE")
+		}else{
+			bgColor.push("#5383b0")
+			label.push(commodities[i])
+		}
+	}
+
+
+	s1 = {
+		labels: label,
+		datasets: [{
+			backgroundColor: bgColor,
+			data: dispersion,
+		}]
+		
+	}
+
 	var myHorizontalBar = new Chart(ctx, {
 		type: 'horizontalBar',
 		data: s1,
 		options: {
 			title: {
 				display: true,
-				text: '10 Most Volatile Mandis'
+				text: 'Most Dispersed Commodities'
 			},
 			legend: {
 				display: false,
@@ -1476,6 +1560,7 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 
 
 }
+
 
 
 

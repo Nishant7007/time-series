@@ -233,8 +233,8 @@ function drawChart1Yr({
 	color
 }){
 	redraw(chart_id);
-	var ctx = document.getElementById(chart_id).getContext('2d');
 
+	var ctx = document.getElementById(chart_id).getContext('2d');
 
 	anomaly= []
 
@@ -1273,5 +1273,93 @@ function drawChartDispersion({
 	});
 
 	chart_dict[chart_id] = myChart;
+
+}
+
+
+function drawChartDispersionAnomaly({
+		chart_id,
+		anomalous_date,
+		anomalous_data,
+		color,
+	}
+){
+	//code
+	var chart = chart_dict[chart_id];
+
+	anomaly = []
+	for(var i = 0; i < anomalous_date.length; i++){
+		x = anomalous_date[i];
+		y = anomalous_data[0][x]["DISPERSION"];
+		anomaly.push({x, y});
+	}
+
+	var anomaly_dataset = {
+	    label: "Anomaly",
+	    fill: false,
+	    pointRadius: 10,
+	    type: 'bubble',
+	    radius: 10,
+	    hoverRadius: 2,
+	    backgroundColor: color,
+	    pointStyle: 'circle',
+	    data: anomaly,
+	}
+	console.log(anomaly_dataset)
+
+	chart.data.datasets.push(anomaly_dataset);
+	chart.update();
+}
+
+
+
+function drawChartMostDispersed({
+	chart_id,
+	commodities,
+	dispersion
+}){
+	redraw(chart_id);
+	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	var label = []
+	var bgColor = []
+
+
+	for(var i = 0; i < Math.min(11, commodities.length); i++){
+		if(commodities[i] == "AVG"){
+			bgColor.push("orange")
+			label.push("AVERAGE")
+		}else{
+			bgColor.push("#5383b0")
+			label.push(commodities[i])
+		}
+	}
+
+
+	s1 = {
+		labels: label,
+		datasets: [{
+			backgroundColor: bgColor,
+			data: dispersion,
+		}]
+		
+	}
+
+	var myHorizontalBar = new Chart(ctx, {
+		type: 'horizontalBar',
+		data: s1,
+		options: {
+			title: {
+				display: true,
+				text: 'Most Dispersed Commodities'
+			},
+			legend: {
+				display: false,
+			},
+		}
+	});
+
+	chart_dict[chart_id] = myHorizontalBar
+
 
 }

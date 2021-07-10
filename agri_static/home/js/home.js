@@ -1,3 +1,7 @@
+
+no_arrival = ["GREEN GRAM DAL (MOONG DAL)", "MASUR DAL", "MUSTARD OIL"]
+
+
 jQuery(document).ready(function($) {
 	$(".dropdown-trigger").dropdown();
 	$('select').formSelect();
@@ -101,13 +105,17 @@ function plotChart(data, chart_id, color){
 		arrival_avg = data["arrival_avg"]
 		arrival_std =  data["arrival_std"]
 
-		plotChart1(chart_id[2], date, arrival, arrival_avg,arrival_std, [], [], "Arrival", max_y_arrival_1yr[SELECTED_COMMODITY], color);
+		arrival_anomalous_date = data["arrival_anomalous_date"]
+		arrival_anomalous_data = data["arrival_anomalous_data"]
+
+		plotChart1(chart_id[2], date, arrival, arrival_avg,arrival_std, arrival_anomalous_date, arrival_anomalous_data, "Arrival", max_y_arrival_1yr[SELECTED_COMMODITY], color);
 
 	})
 }
 
 
 function plotChart1(chart_id, date, value, avg, std, anomaly_dates, anomaly_data, data_label, max_yaxis=0.5, color="green"){
+	max_yaxis = undefined;
 	redraw(chart_id);
 	var ctx = document.getElementById(chart_id).getContext('2d');
 
@@ -191,7 +199,7 @@ function plotChart1(chart_id, date, value, avg, std, anomaly_dates, anomaly_data
 
 	datasets = []
 	if(data_label=="Arrival"){
-		datasets = [s1]
+		datasets = [s1, s2, s3, s4, s5, s6]
 	}else{
 		datasets = [s1, s2, s3, s4, s5, s6]
 	}
@@ -368,22 +376,25 @@ function plotChartForecast(data, chart_id, color){
 		arrival_original = data["arrival_original"]
 		arrival_forecast = data["arrival_forecast"]
 		arrival_avg = data["arrival_avg"]
-		arrival_std =  data["arrival_std"]
+		arrival_std =  data["arrival_std"],
+		arrival_anomalous_date = data["arrival_anomalous_date"]
+		arrival_anomalous_data = data["arrival_anomalous_data"]
 
-		plotChartForecast1(chart_id[2], date, arrival_original, arrival_forecast,  arrival_avg,arrival_std, [], [], "Arrival", max_y_forecast[SELECTED_COMMODITY], color);
+		plotChartForecast1(chart_id[2], date, arrival_original, arrival_forecast,  arrival_avg,arrival_std, arrival_anomalous_date, arrival_anomalous_data, "Arrival", max_y_forecast[SELECTED_COMMODITY], color);
 
 	})
 }
 
 
 function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg, std,anomaly_dates, anomaly_data, data_label, max_yaxis=0.5, color="green"){
+	max_yaxis = undefined;
 	redraw(chart_id);
 	var ctx = document.getElementById(chart_id).getContext('2d');
 
 	
 	anomaly= []
-	// console.log(date, anomaly_dates)
 
+	// old method showing full forcast don't delete
 	for(var i = 0; i < date.length; i++){
 		if(anomaly_dates.includes(date[i])){
 			anomaly.push(value_forecast[i])
@@ -391,6 +402,31 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 			anomaly.push(null)
 		}
 	}
+
+	// new change
+	// for(var i = 0; i < date.length - 30; i++){
+	// 	if(i < date.length - 31)
+	// 		value_forecast[i] = null;
+	// 	if(data_label != "Arrival"){
+	// 		if(anomaly_dates.includes(date[i])){
+	// 			anomaly.push(value_original[i])
+	// 		}else{
+	// 			anomaly.push(null)
+	// 		}
+
+	// 	}
+		
+	// }
+	
+	// value_forecast[date.length - 31] = value_original[date.length - 31]
+	// for(var i = date.length - 31; i < date.length; i++){
+	// 	if(anomaly_dates.includes(date[i])){
+	// 		anomaly.push(value_forecast[i])
+	// 	}else{
+	// 		anomaly.push(null)
+	// 	}
+	// }
+	// new change end
 
 
 
@@ -479,7 +515,7 @@ function plotChartForecast1(chart_id, date, value_original, value_forecast,  avg
 
 	datasets = []
 	if(data_label=="Arrival"){
-		datasets = [s0, s1]
+		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}else{
 		datasets = [s0, s1, s2, s3, s4, s5, s6]
 	}
@@ -610,17 +646,29 @@ function plotChartArrivalVsMandi(data, chart_id, color){
 
 		arrival = data["arrival"];
 
-		plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_std, arrival, max_y_arrival_mandi[SELECTED_COMMODITY], color);
+		mandi_anomalous_date = data["mandi_anomalous_date"]
+		mandi_anomalous_data = data["mandi_anomalous_data"]
+
+		plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_std, arrival, mandi_anomalous_date, mandi_anomalous_data,  max_y_arrival_mandi[SELECTED_COMMODITY], color);
 
 
 	});
 
 }
 
-function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_std, arrival, max_yaxis=undefined, color="green"){
+function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_std, arrival, anomalous_date, anomalous_data, max_yaxis=undefined, color="green"){
+	max_yaxis = undefined;
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
 
+	anomaly= []
+	for(var i = 0; i < date.length; i++){
+		if(anomalous_date.includes(date[i])){
+			anomaly.push(mandi_price[i])
+		}else{
+			anomaly.push(null)
+		}
+	}
 
 	mean_plus_std = mandi_avg.map(function (num, idx) {
 		return num + mandi_std[idx];
@@ -679,12 +727,30 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 		yAxisID: "axis_1"
 	}
 
+	s6 = {
+		label:  "Anomaly",
+		data: anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: color,
+		pointStyle: 'circle',
+
+	}
+
+	s7 = {
+		data: anomalous_data,
+		hidden: true,
+	}
+
 	
 	var myChart = new Chart( ctx, {
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4, s5],
+			datasets: [s1, s2, s3, s4, s5, s6, s7],
 		},
 		options: {
 			scales: {
@@ -709,7 +775,7 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 	            	id: "axis_1",
 	            	position: "left",
 	            	ticks: {
-	            		max: 8000,
+	            		max: max_yaxis,
 	            		min: 0,
 	            		maxTicksLimit: 6,
 	            	}
@@ -718,7 +784,7 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 	            	id: "axis_2",
 	            	position: "right",
 	            	ticks: {
-	            		max: 8000,
+	            		max: max_yaxis,
 	            		min: 0,
 	            		maxTicksLimit: 6,
 	            	}
@@ -731,6 +797,7 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 	        legend: {
 	        	labels: {
 	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex == 5) return true;
 	        			if (legendItem.datasetIndex >= 2) {
 	        				return false;
 	        			}
@@ -745,6 +812,38 @@ function plotChartArrivalVsMandi1(chart_id, date, mandi_price, mandi_avg, mandi_
 	});
 
 	chart_dict[chart_id] = myChart;
+
+	document.getElementById(chart_id).onclick = function (evt) {
+		chart_id = $(this)[0].id;
+		data_type = $(this)[0].dataset.type; // mandi/retail/arrival
+
+		myChart = chart_dict[chart_id];
+
+        var activePoints = myChart.getElementsAtEventForMode(evt, 'point', myChart.options); 
+        // filer array, keep which have _datasetIndex=5
+        active_point = activePoints.filter(p=>{
+        	if(p._datasetIndex == 5) return true;
+        	return false;
+        })?.[0];
+
+        if(!active_point) return;
+
+        console.log(active_point)
+
+        var x = myChart.data.labels[active_point._index];
+        var y = myChart.data.datasets[active_point._datasetIndex].data[active_point._index];
+        console.log(x, y);
+
+        //extract information from x (date), active_point._datasetIndex =6
+        info = myChart.data.datasets[6].data[0][x];
+        info = {
+        	...info,
+        	data_type,
+        }
+
+        showAnomalyModal(info)
+        console.log(info, data_type)
+    };
 
 
 
@@ -768,17 +867,30 @@ function plotChartMandiVsRetail(data, chart_id, color){
 
 		date = data["date"];
 
+		mandi_anomalous_date = data["mandi_anomalous_date"]
+		mandi_anomalous_data = data["mandi_anomalous_data"]
 
-		plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_std, retail_price, retail_avg, retail_std, max_y_mandi_retail[SELECTED_COMMODITY], color);
+
+		plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_std, retail_price, retail_avg, retail_std, mandi_anomalous_date, mandi_anomalous_data, max_y_mandi_retail[SELECTED_COMMODITY], color);
 
 
 	});
 
 }
 
-function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_std, retail_price, retail_avg, retail_std, max_yaxis=undefined, color="green"){
+function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_std, retail_price, retail_avg, retail_std, anomalous_date, anomalous_data, max_yaxis=undefined, color="green"){
+	max_yaxis = undefined;
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	anomaly= []
+	for(var i = 0; i < date.length; i++){
+		if(anomalous_date.includes(date[i])){
+			anomaly.push(mandi_price[i])
+		}else{
+			anomaly.push(null)
+		}
+	}
 
 
 	mean_plus_std_mandi = mandi_avg.map(function (num, idx) {
@@ -862,13 +974,31 @@ function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_s
 		fill: false,
 	}
 
+	s9 = {
+		label:  "Anomaly",
+		data: anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: color,
+		pointStyle: 'circle',
+
+	}
+
+	s10 = {
+		data: anomalous_data,
+		hidden: true,
+	}
+
 	
 
 	var myChart = new Chart( ctx, {
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4, s5, s6, s7, s8],
+			datasets: [s1, s2, s3, s4, s5, s6, s7, s8, s9, s10],
 		},
 		options: {
 			scales: {
@@ -904,6 +1034,7 @@ function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_s
 	        legend: {
 	        	labels: {
 	        		filter: function(legendItem, chartData) {
+	        			if (legendItem.datasetIndex == 8) return true;
 	        			if (legendItem.datasetIndex >= 2) {
 	        				return false;
 	        			}
@@ -917,6 +1048,38 @@ function plotChartMandiVsRetail1(chart_id, date, mandi_price, mandi_avg, mandi_s
 	});
 
 	chart_dict[chart_id] = myChart;
+
+	document.getElementById(chart_id).onclick = function (evt) {
+		chart_id = $(this)[0].id;
+		data_type = $(this)[0].dataset.type; // mandi/retail/arrival
+
+		myChart = chart_dict[chart_id];
+
+        var activePoints = myChart.getElementsAtEventForMode(evt, 'point', myChart.options); 
+        // filer array, keep which have _datasetIndex=5
+        active_point = activePoints.filter(p=>{
+        	if(p._datasetIndex == 8) return true;
+        	return false;
+        })?.[0];
+
+        if(!active_point) return;
+
+        console.log(active_point)
+
+        var x = myChart.data.labels[active_point._index];
+        var y = myChart.data.datasets[active_point._datasetIndex].data[active_point._index];
+        console.log(x, y);
+
+        //extract information from x (date), active_point._datasetIndex =6
+        info = myChart.data.datasets[9].data[0][x];
+        info = {
+        	...info,
+        	data_type,
+        }
+
+        showAnomalyModal(info)
+        console.log(info, data_type)
+    };
 }
 
 
@@ -932,11 +1095,17 @@ function plotChartVolatilityMandiRetail(data, chart_ids, color){
 		retail_avg = data["retail_avg"]
 		retail_std =  data["retail_std"]
 
+		mandi_anomalous_date = data["mandi_anomalous_date"]
+		mandi_anomalous_data = data["mandi_anomalous_data"]
+
+		retail_anomalous_date = data["retail_anomalous_date"]
+		retail_anomalous_data = data["retail_anomalous_data"]
+
 		date = data["date"];
 		
 
-		plotChartVolatilityMandiRetail1(chart_ids[0], date, mandi_vol, mandi_avg, mandi_std, "Mandi Volatility", undefined, color);
-		plotChartVolatilityMandiRetail1(chart_ids[1], date, retail_vol, retail_avg, retail_std, "Retail Volatility" , undefined, color);
+		plotChartVolatilityMandiRetail1(chart_ids[0], date, mandi_vol, mandi_avg, mandi_std, mandi_anomalous_date, mandi_anomalous_data,  "Mandi Volatility", undefined, color);
+		plotChartVolatilityMandiRetail1(chart_ids[1], date, retail_vol, retail_avg, retail_std, retail_anomalous_date, retail_anomalous_data, "Retail Volatility" , undefined, color);
 
 
 	});
@@ -944,9 +1113,22 @@ function plotChartVolatilityMandiRetail(data, chart_ids, color){
 }
 
 
-function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_label, max_yaxis, color){
+function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std,  anomalous_date, anomalous_data,data_label, max_yaxis, color){
+	max_yaxis = undefined;
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	anomaly= []
+	for(var i = 0; i < date.length; i++){
+		if(anomalous_date.includes(date[i])){
+			anomaly.push(vol[i])
+		}else{
+			anomaly.push(null)
+		}
+	}
+
+	// console.log(anomaly)
+	// console.log(anomalous_data)
 
 
 	mean_plus_std = avg.map(function (num, idx) {
@@ -995,14 +1177,32 @@ function plotChartVolatilityMandiRetail1(chart_id, date, vol, avg, std, data_lab
 		fill: false,
 	}
 
-	
+	s5 = {
+		label:  "Anomaly",
+		data: anomaly,
+		fill: false,
+		pointRadius: 10,
+		type: 'bubble',
+		radius: 10,
+		hoverRadius: 2,
+		backgroundColor: color,
+		pointStyle: 'circle',
+
+	}
+
+	s6 = {
+		data: anomalous_data,
+		hidden: true,
+	}
+
+	// console.log(s6)
 	
 
 	var myChart = new Chart( ctx, {
 		type: 'line',
 		data: {
 			labels: date,
-			datasets: [s1, s2, s3, s4],
+			datasets: [s1, s2, s3, s4, s5, s6],
 		},
 		options: {
 			scales: {
@@ -1090,6 +1290,7 @@ function plotDispersion(){
 
 }
 function plotDispersion1(chart_id, date, disp, avg, std, data_label, max_yaxis, color){
+	max_yaxis = undefined;
 	redraw(chart_id)
 	var ctx = document.getElementById(chart_id).getContext('2d');
 
@@ -1204,9 +1405,10 @@ function plotMostVolatile(){
 	date = $("#id_news_feed_date").val();
 	data = {
 		"commodity_name": SELECTED_COMMODITY,
+		"commodity": SELECTED_COMMODITY,
 		date,
 	}
-	requestPostData("/agri_req/get_most_volatile_mandi", {"data": data})
+	requestPostData("/agri_req/getMostVolatileMandiByDate", {"data": data})
 	.then(data=> {
 		console.log(data);
 		mandi_name = data["mandi_name"];
@@ -1215,7 +1417,7 @@ function plotMostVolatile(){
 
 		plotMostVolatile1("most_volatile_chart", mandi_name, state_name, vol);
 
-
+// "/agri_req/getMostVolatileMandiByDate"
 
 
 
@@ -1246,6 +1448,9 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 
 
 
+	console.log({label, bgColor, vol})
+
+
 
 	s1 = {
 		labels: label,
@@ -1255,13 +1460,95 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 		}]
 		
 	}
+
+	console.log(s1);
+	var myHorizontalBar = new Chart(ctx, {
+		type: 'horizontalBar',
+		data: s1,
+		options: {
+			scales: {
+				xAxes: [{
+					ticks:{
+						min: 0.05,
+					}
+				}],
+			},
+			title: {
+				display: true,
+				text: '10 Most Volatile Mandis'
+			},
+			legend: {
+				display: false,
+			},
+		}
+	});
+	chart_dict[chart_id] = myHorizontalBar
+
+
+}
+
+
+async function plotMostDispersedChart(){
+	date = $("#id_news_feed_date").val();
+	let data = {
+		date
+	}
+
+	let chart_data = await requestPostData("/agri_req/get_most_dispersed_commodity", {"data": data})
+
+
+	let commodities = chart_data["commodity"];
+	let dispersion = chart_data["dispersion"];
+
+
+	let opts = {
+		chart_id: "id_most_dispersed_commodity",
+		commodities,
+		dispersion
+	}
+
+	drawChartMostDispersed(opts)
+
+}
+function drawChartMostDispersed({
+	chart_id,
+	commodities,
+	dispersion
+}){
+	redraw(chart_id);
+	var ctx = document.getElementById(chart_id).getContext('2d');
+
+	var label = []
+	var bgColor = []
+
+
+	for(var i = 0; i < Math.min(11, commodities.length); i++){
+		if(commodities[i] == "AVG"){
+			bgColor.push("orange")
+			label.push("AVERAGE")
+		}else{
+			bgColor.push("#5383b0")
+			label.push(commodities[i])
+		}
+	}
+
+
+	s1 = {
+		labels: label,
+		datasets: [{
+			backgroundColor: bgColor,
+			data: dispersion,
+		}]
+		
+	}
+
 	var myHorizontalBar = new Chart(ctx, {
 		type: 'horizontalBar',
 		data: s1,
 		options: {
 			title: {
 				display: true,
-				text: '10 Most Volatile Mandis'
+				text: 'Most Dispersed Commodities'
 			},
 			legend: {
 				display: false,
@@ -1273,6 +1560,7 @@ function plotMostVolatile1(chart_id, mandi_name, state_name, vol){
 
 
 }
+
 
 
 
