@@ -1031,7 +1031,7 @@ def getMostAnomolousMandi(request):
 
     
 def getDispersionAnomalyShowDate(commodity_name, from_date, to_date, data_type, filter=True):
-    file_path = data_path + "/" + commodity_name + "/" + "Dispersion/ShowAnomalies_dispersion_" + data_type + ".csv"
+    file_path = data_path + "/" + commodity_name + "/" + "Dispersion/showAnomalies_dispersion_" + data_type + ".csv"
     from_date = pd.to_datetime(from_date, format="%Y-%m-%d") 
     to_date = pd.to_datetime(to_date, format="%Y-%m-%d")
     df = pd.read_csv(file_path)
